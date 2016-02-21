@@ -45,4 +45,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'org.nanohttpd:nanohttpd:2.2.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile 'org.greenrobot:eventbus:3.0.0'
 }

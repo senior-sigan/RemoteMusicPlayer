@@ -11,10 +11,17 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     private val server: Server = Server()
+    private val router: Router = Router()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        router.onStart()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        router.onStop()
     }
 
     private fun restartServer() {
@@ -29,15 +36,15 @@ class MainActivity : AppCompatActivity() {
             server.stop()
             server.start()
         } catch (e: Exception) {
-            Log.e("MusicRoom", e.message, e)
+            Log.e(TAG, e.message, e)
         }
 
-        Log.i("MusicRoom", "Listen http://" + formattedIpAddress + ":" + Server.PORT)
+        Log.i(TAG, "Listen http://" + formattedIpAddress + ":" + Server.PORT)
     }
 
     private fun stopServer() {
         server.stop()
-        Log.i("MusicRoom", "Server stopped")
+        Log.i(TAG, "Server stopped")
     }
 
     override fun onResume() {

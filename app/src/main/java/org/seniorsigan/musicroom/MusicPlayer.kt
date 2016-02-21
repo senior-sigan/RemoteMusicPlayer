@@ -4,6 +4,7 @@ import android.media.AudioManager
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.util.Log
+import org.greenrobot.eventbus.EventBus
 
 import java.io.IOException
 import java.util.HashMap
@@ -18,13 +19,17 @@ object MusicPlayer {
         player.setDataSource(url)
         player.prepareAsync()
         player.setOnPreparedListener {
-            Log.i("MusicRoom", "Playing '$title'")
+            Log.i(TAG, "Playing '$title'")
             player.start()
+        }
+        player.setOnCompletionListener {
+            Log.i(TAG, "End playing '$title'")
+            EventBus.getDefault().post(AudioPlayedMessage(title))
         }
         return title
     }
 
-    private fun retrieveTitle(url: String): String {
+    fun retrieveTitle(url: String): String {
         val retriever = MediaMetadataRetriever()
         retriever.setDataSource(url, HashMap<String, String>())
         val artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
