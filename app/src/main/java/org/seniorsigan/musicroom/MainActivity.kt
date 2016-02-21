@@ -10,7 +10,7 @@ import java.io.IOException
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
-    private var server: Server? = null
+    private val server: Server = Server()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,14 +25,10 @@ class MainActivity : AppCompatActivity() {
                 ipAddress and 0xff, ipAddress shr 8 and 0xff,
                 ipAddress shr 16 and 0xff, ipAddress shr 24 and 0xff)
 
-        if (server != null) {
-            server!!.stop()
-            server = null
-        }
-        server = Server()
         try {
-            server!!.start()
-        } catch (e: IOException) {
+            server.stop()
+            server.start()
+        } catch (e: Exception) {
             Log.e("MusicRoom", e.message, e)
         }
 
@@ -40,10 +36,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun stopServer() {
-        if (server != null) {
-            server!!.stop()
-            Log.i("MusicRoom", "Server stopped")
-        }
+        server.stop()
+        Log.i("MusicRoom", "Server stopped")
     }
 
     override fun onResume() {

@@ -9,10 +9,11 @@ import java.io.IOException
 import java.util.HashMap
 
 object MusicPlayer {
-    private val player: MediaPlayer = MediaPlayer()
+    private var player: MediaPlayer = MediaPlayer()
 
     fun playMusic(url: String): String {
         val title = retrieveTitle(url)
+        player.reset()
         player.setAudioStreamType(AudioManager.STREAM_MUSIC)
         player.setDataSource(url)
         player.prepareAsync()
