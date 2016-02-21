@@ -1,0 +1,48 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
+def gitCommitCount =
+        Integer.parseInt('git rev-list --count HEAD'.execute([], project.rootDir).text.trim())
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    productFlavors {
+        dev {
+            minSdkVersion 23 // To reduce compilation time
+        }
+        prod {
+            minSdkVersion 15
+        }
+    }
+
+    defaultConfig {
+        applicationId "org.seniorsigan.musicroom"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode gitCommitCount
+        versionName "$gitCommitCount"
+        archivesBaseName = "musicroom-$versionCode"
+        buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'org.nanohttpd:nanohttpd:2.2.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
