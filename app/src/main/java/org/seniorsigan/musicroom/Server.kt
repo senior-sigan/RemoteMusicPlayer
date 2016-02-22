@@ -12,9 +12,9 @@ class Server : NanoHTTPD(Server.PORT) {
         val params = session.parms
         val url = params["url"] ?: return NanoHTTPD.newFixedLengthResponse("Url can't be empty")
         try {
-            val title = MusicPlayer.retrieveTitle(url)
-            EventBus.getDefault().post(AudioMessage(url = url, title = title))
-            return NanoHTTPD.newFixedLengthResponse(title)
+            val info = MusicPlayer.retrieveInfo(url)
+            EventBus.getDefault().post(info)
+            return NanoHTTPD.newFixedLengthResponse(info.name)
         } catch (e: Exception) {
             Log.e(TAG, e.message, e)
             return NanoHTTPD.newFixedLengthResponse(e.message)

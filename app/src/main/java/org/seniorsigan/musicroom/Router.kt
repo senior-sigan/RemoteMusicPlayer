@@ -7,10 +7,10 @@ import java.io.Serializable
 
 open class Router {
     @Subscribe
-    open fun onAudioAdded(msg: AudioMessage) {
-        Log.i(TAG, "Received $msg")
+    open fun onAudioAdded(audioInfo: AudioInfo) {
+        Log.i(TAG, "Received $audioInfo")
         try {
-            MusicPlayer.playMusic(msg.url)
+            MusicPlayer.playMusic(audioInfo)
         } catch (e: Exception) {
             Log.e(TAG, e.message, e)
         }
@@ -30,5 +30,4 @@ open class Router {
     }
 }
 
-data class AudioMessage(val url: String, val title: String): Serializable
 data class AudioPlayedMessage(val title: String): Serializable

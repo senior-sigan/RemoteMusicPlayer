@@ -7,35 +7,48 @@ import android.util.Log
 import org.greenrobot.eventbus.EventBus
 
 import java.io.IOException
+import java.io.Serializable
 import java.util.HashMap
 
 object MusicPlayer {
     private var player: MediaPlayer = MediaPlayer()
 
-    fun playMusic(url: String): String {
-        val title = retrieveTitle(url)
+    fun playMusic(audio: AudioInfo) {
         player.reset()
         player.setAudioStreamType(AudioManager.STREAM_MUSIC)
-        player.setDataSource(url)
+        player.setDataSource(audio.url)
         player.prepareAsync()
         player.setOnPreparedListener {
-            Log.i(TAG, "Playing '$title'")
+            Log.i(TAG, "Playing '${audio.name}'")
             player.start()
         }
         player.setOnCompletionListener {
-            Log.i(TAG, "End playing '$title'")
-            EventBus.getDefault().post(AudioPlayedMessage(title))
+            Log.i(TAG, "End playing '${audio.name}'")
+            EventBus.getDefault().post(AudioPlayedMessage(audio.name))
         }
-        return title
     }
 
-    fun retrieveTitle(url: String): String {
+    fun retrieveInfo(url: String): AudioInfo {
         val retriever = MediaMetadataRetriever()
         retriever.setDataSource(url, HashMap<String, String>())
-        val artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
-        val track = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
-        val title = artist + " - " + track
+        val info = AudioInfo(
+                artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST) ?: "",
+                title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE) ?: "",
+                album = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM) ?: "",
+                picture = retriever.embeddedPicture,
+                url = url)
         retriever.release()
-        return title
+        return info
     }
+}
+
+data class AudioInfo(
+        val artist: String,
+        val title: String,
+        val url: String,
+        val album: String,
+        val picture: ByteArray?
+
+): Serializable {
+    val name = "$artist - $title"
 }
