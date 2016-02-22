@@ -13,6 +13,21 @@ import java.util.HashMap
 object MusicPlayer {
     private var player: MediaPlayer = MediaPlayer()
 
+    fun playPause(): Boolean {
+        return if (player.isPlaying) {
+            player.pause()
+            false
+        } else {
+            player.start()
+            true
+        }
+    }
+
+    fun dispose() {
+        player.stop()
+        player.release()
+    }
+
     fun playMusic(audio: AudioInfo) {
         player.reset()
         player.setAudioStreamType(AudioManager.STREAM_MUSIC)
@@ -32,23 +47,12 @@ object MusicPlayer {
         val retriever = MediaMetadataRetriever()
         retriever.setDataSource(url, HashMap<String, String>())
         val info = AudioInfo(
-                artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST) ?: "",
-                title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE) ?: "",
-                album = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM) ?: "",
+                artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST),
+                title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE),
+                album = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM),
                 picture = retriever.embeddedPicture,
                 url = url)
         retriever.release()
         return info
     }
-}
-
-data class AudioInfo(
-        val artist: String,
-        val title: String,
-        val url: String,
-        val album: String,
-        val picture: ByteArray?
-
-): Serializable {
-    val name = "$artist - $title"
 }

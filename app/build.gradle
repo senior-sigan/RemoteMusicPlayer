@@ -39,11 +39,24 @@ android {
     }
 }
 
+ext {
+    anko_version = '0.8.2'
+    support_version = '23.1.1'
+    nanohttpd_version = '2.2.0'
+    eventbus_version = '3.0.0'
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'org.nanohttpd:nanohttpd:2.2.0'
+
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'org.greenrobot:eventbus:3.0.0'
+    compile "com.android.support:appcompat-v7:$support_version"
+
+    compile "org.nanohttpd:nanohttpd:$nanohttpd_version"
+    compile "org.greenrobot:eventbus:$eventbus_version"
+
+    compile "org.jetbrains.anko:anko-sdk15:$anko_version"
+    compile "org.jetbrains.anko:anko-support-v4:$anko_version"
+    compile "org.jetbrains.anko:anko-appcompat-v7:$anko_version"
 }
