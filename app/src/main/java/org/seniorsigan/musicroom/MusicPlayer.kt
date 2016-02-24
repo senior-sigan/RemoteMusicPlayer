@@ -44,6 +44,7 @@ object MusicPlayer {
     }
 
     fun retrieveInfo(url: String): AudioInfo {
+        Log.i(TAG, "Get info about $url")
         val retriever = MediaMetadataRetriever()
         retriever.setDataSource(url, HashMap<String, String>())
         val info = AudioInfo(
