@@ -151,6 +151,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        Log.d(TAG, "Get results: $resultCode")
         if (data != null) {
             VKSdk.onActivityResult(requestCode, resultCode, data, object : VKCallback<VKAccessToken> {
                 override fun onError(err: VKError?) {
