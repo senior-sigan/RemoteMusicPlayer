@@ -24,7 +24,7 @@ import org.jetbrains.anko.*
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-    private val server: Server = Server()
+    private lateinit var server: Server
     private lateinit var coverView: ImageView
     private lateinit var titleView: TextView
     private lateinit var artistView: TextView
@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        server = Server(assets)
         setContentView(R.layout.activity_main)
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)

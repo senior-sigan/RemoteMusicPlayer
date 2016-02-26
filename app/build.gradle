@@ -54,6 +54,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:$support_version"
 
     compile "org.nanohttpd:nanohttpd:$nanohttpd_version"
+    compile "org.nanohttpd:nanohttpd-nanolets:$nanohttpd_version"
     compile "org.greenrobot:eventbus:$eventbus_version"
 
     compile "org.jetbrains.anko:anko-sdk15:$anko_version"
