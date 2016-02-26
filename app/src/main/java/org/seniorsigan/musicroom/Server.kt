@@ -36,7 +36,7 @@ class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
 
         override fun get(uriResource: UriResource?, urlParams: MutableMap<String, String>?, session: IHTTPSession?): Response? {
             Log.d(TAG, "Call VK search")
-            val query = urlParams?.get("q") ?: ""
+            val query = session?.parms?.get("q") ?: ""
             val msg = if (VKSdk.isLoggedIn()) {
                 val req = VKApi.audio().search(
                         VKParameters(mapOf(
@@ -73,7 +73,7 @@ class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
         override fun getMimeType() = MIME_PLAINTEXT
 
         override fun get(uriResource: UriResource?, urlParams: MutableMap<String, String>?, session: IHTTPSession?): Response? {
-            val url = urlParams?.get("q") ?: return NanoHTTPD.newFixedLengthResponse("Q can't be empty")
+            val url = session?.parms?.get("q") ?: return NanoHTTPD.newFixedLengthResponse("Q can't be empty")
             try {
                 val info = MusicPlayer.retrieveInfo(url)
                 EventBus.getDefault().post(info)
