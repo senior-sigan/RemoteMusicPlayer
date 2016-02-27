@@ -10,6 +10,8 @@ export default React.createClass({
       },
       body: JSON.stringify({
         url: this.props.url,
+        title: this.props.title,
+        artist: this.props.artist,
       }),
     });
   },

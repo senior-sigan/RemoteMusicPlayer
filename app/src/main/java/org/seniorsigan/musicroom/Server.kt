@@ -80,9 +80,8 @@ class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
                 session?.parseBody(body)
                 val data = App.parseJson(body["postData"], TrackForm::class.java) ?: return NanoHTTPD.newFixedLengthResponse(Response.Status.BAD_REQUEST, MIME_PLAINTEXT, "Bad form data")
                 try {
-                    val info = MusicPlayer.retrieveInfo(data.url)
-                    EventBus.getDefault().post(info)
-                    return NanoHTTPD.newFixedLengthResponse(info.name)
+                    EventBus.getDefault().post(data)
+                    return NanoHTTPD.newFixedLengthResponse(data.name)
                 } catch (e: Exception) {
                     Log.e(TAG, e.message, e)
                     return NanoHTTPD.newFixedLengthResponse(e.message)

@@ -28,7 +28,7 @@ object MusicPlayer {
         player.release()
     }
 
-    fun playMusic(audio: AudioInfo) {
+    fun playMusic(audio: TrackForm) {
         player.reset()
         player.setAudioStreamType(AudioManager.STREAM_MUSIC)
         player.setDataSource(audio.url)

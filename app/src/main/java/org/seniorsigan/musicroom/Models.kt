@@ -29,5 +29,10 @@ data class CommonResponse(
 ): Serializable
 
 data class TrackForm(
-        val url: String = ""
-)
+        val url: String = "",
+        val title: String? = null,
+        val artist: String? = null
+): Serializable {
+    val name: String
+        get() = "$artist - $title"
+}

@@ -22,6 +22,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.jetbrains.anko.*
 import java.util.*
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
     private lateinit var server: Server
@@ -31,29 +32,36 @@ class MainActivity : AppCompatActivity() {
     private lateinit var playPauseBtn: ImageButton
 
     @Subscribe
-    fun onAudioAdded(audioInfo: AudioInfo) {
-        Log.i(TAG, "Received $audioInfo")
+    fun onAudioAdded(track: TrackForm) {
+        Log.i(TAG, "Received $track")
         onUiThread {
-            with(audioInfo, {
-                if (picture != null) {
-                    coverView.image = BitmapDrawable(
-                            resources,
-                            BitmapFactory.decodeByteArray(picture, 0, picture.size))
-                } else {
-                    coverView.image = resources.getDrawable(
-                            R.drawable.default_album_art_big_card, theme)
-                }
-
-                titleView.text = (title ?: "Unknown title")
-                artistView.text = (artist ?: "Unknown artist")
-                playPauseBtn.image = resources.getDrawable(
-                        android.R.drawable.ic_media_pause, theme)
-            })
+            titleView.text = (track.title ?: "Unknown title")
+            artistView.text = (track.artist ?: "Unknown artist")
+            coverView.image = resources.getDrawable(
+                    R.drawable.default_album_art_big_card, theme)
         }
         try {
-            MusicPlayer.playMusic(audioInfo)
+            MusicPlayer.playMusic(track)
         } catch (e: Exception) {
             Log.e(TAG, e.message, e)
+        }
+        thread {
+            val audioInfo = MusicPlayer.retrieveInfo(track.url)
+            onUiThread {
+                with(audioInfo, {
+                    if (picture != null) {
+                        coverView.image = BitmapDrawable(
+                                resources,
+                                BitmapFactory.decodeByteArray(picture, 0, picture.size))
+                    } else {
+                        coverView.image = resources.getDrawable(
+                                R.drawable.default_album_art_big_card, theme)
+                    }
+
+                    playPauseBtn.image = resources.getDrawable(
+                            android.R.drawable.ic_media_pause, theme)
+                })
+            }
         }
     }
 
