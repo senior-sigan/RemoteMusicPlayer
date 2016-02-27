@@ -72,53 +72,63 @@ gulp.task('watchify', () => {
   return rebundle();
 });
 
-gulp.task('browserify', () => {
+gulp.task('browserify', () =>
   browserify(paths.srcJsx, {debug: true})
-  .transform(babelify)
-  .bundle()
-  .pipe(source(paths.bundle))
-  .pipe(buffer())
-  .pipe(sourcemaps.init({loadMaps: true}))
-  .pipe(uglify())
-  .pipe(sourcemaps.write('.'))
-  .pipe(gulp.dest(paths.distJs));
-});
+    .transform(babelify)
+    .bundle()
+    .pipe(source(paths.bundle))
+    .pipe(buffer())
+    .pipe(sourcemaps.init({loadMaps: true}))
+    .pipe(uglify())
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest(paths.distJs))
+);
 
-gulp.task('styles', () => {
+gulp.task('styles', () =>
   gulp.src(paths.srcCss)
-  .pipe(sourcemaps.init())
-  .pipe(postcss([vars, extend, nested, autoprefixer, cssnano]))
-  .pipe(sourcemaps.write('.'))
-  .pipe(gulp.dest(paths.dist))
-  .pipe(reload({stream: true}));
-});
+    .pipe(sourcemaps.init())
+    .pipe(postcss([vars, extend, nested, autoprefixer, cssnano]))
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest(paths.dist))
+    .pipe(reload({stream: true}))
+);
 
-gulp.task('htmlReplace', () => {
+gulp.task('htmlReplace', () =>
   gulp.src('index.html')
-  .pipe(htmlReplace({css: 'styles/main.css', js: 'js/app.js'}))
-  .pipe(gulp.dest(paths.dist));
-});
+    .pipe(htmlReplace({css: 'styles/main.css', js: 'js/app.js'}))
+    .pipe(gulp.dest(paths.dist))
+);
 
-gulp.task('images', () => {
+gulp.task('images', () =>
   gulp.src(paths.srcImg)
     .pipe(imagemin({
       progressive: true,
       svgoPlugins: [{removeViewBox: false}],
       use: [pngquant()]
     }))
-    .pipe(gulp.dest(paths.distImg));
-});
+    .pipe(gulp.dest(paths.distImg))
+);
 
-gulp.task('lint', () => {
+gulp.task('lint', () =>
   gulp.src(paths.srcLint)
-  .pipe(eslint())
-  .pipe(eslint.format());
-});
+    .pipe(eslint())
+    .pipe(eslint.format())
+);
 
 gulp.task('watchTask', () => {
   gulp.watch(paths.srcCss, ['styles']);
   gulp.watch(paths.srcJsx, ['lint']);
 });
+
+gulp.task('copyAssets', () =>
+  gulp.src(paths.distDeploy)
+    .pipe(gulp.dest(paths.assets))
+);
+
+gulp.task('favicon', () =>
+  gulp.src('favicon.ico')
+    .pipe(gulp.dest(paths.dist))
+);
 
 gulp.task('watch', cb => {
   runSequence('clean', ['browserSync', 'watchTask', 'watchify', 'styles', 'lint', 'images'], cb);
@@ -127,16 +137,6 @@ gulp.task('watch', cb => {
 gulp.task('build', cb => {
   process.env.NODE_ENV = 'production';
   runSequence('clean', ['browserify', 'styles', 'htmlReplace', 'images', 'favicon'], cb);
-});
-
-gulp.task('copyAssets', () => {
-  return gulp.src(paths.distDeploy)
-    .pipe(gulp.dest(paths.assets));
-});
-
-gulp.task('favicon', () => {
-  return gulp.src('favicon.ico')
-      .pipe(gulp.dest(paths.dist));
 });
 
 gulp.task('deploy', cb => {
