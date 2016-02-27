@@ -19,7 +19,7 @@ class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
 
     override fun addMappings() {
         super.addMappings()
-        addRoute("/api/vk", VkHandler::class.java)
+        addRoute("/api/vk.json", VkHandler::class.java)
         addRoute("/api/url", BaseHandler::class.java)
         addRoute("/(.)+", StaticHandler::class.java, manager)
         addRoute("/", StaticHandler::class.java, manager)
@@ -43,23 +43,25 @@ class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
                                 "auto_complete" to 1,
                                 "sort" to 2,
                                 "q" to query)))
-                req.executeWithListener(object : VKRequest.VKRequestListener() {
+                val tracks: MutableList<TrackModel> = arrayListOf()
+                req.executeSyncWithListener(object : VKRequest.VKRequestListener() {
                     override fun onComplete(response: VKResponse?) {
                         super.onComplete(response)
                         if (response != null) {
                             Log.i(TAG, "Found info ${response.json}")
                             val data = response.parsedModel as VkAudioArray
-                            val info = MusicPlayer.retrieveInfo(data[0].url)
-                            EventBus.getDefault().post(info)
+                            tracks.addAll(data.map {
+                                TrackModel(it.artist, it.title, it.url)
+                            })
                         }
                     }
                 })
 
-                "Requested '$query' by user"
+                CommonResponse(true, null, tracks)
             } else {
-                "User not found"
+                CommonResponse(false, "vk should be connected", null)
             }
-            return NanoHTTPD.newFixedLengthResponse(status, mimeType, msg)
+            return NanoHTTPD.newFixedLengthResponse(status, mimeType, App.toJson(msg))
         }
     }
 

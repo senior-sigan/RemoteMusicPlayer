@@ -56,6 +56,7 @@ dependencies {
     compile "org.nanohttpd:nanohttpd:$nanohttpd_version"
     compile "org.nanohttpd:nanohttpd-nanolets:$nanohttpd_version"
     compile "org.greenrobot:eventbus:$eventbus_version"
+    compile 'com.google.code.gson:gson:2.6.2'
 
     compile "org.jetbrains.anko:anko-sdk15:$anko_version"
     compile "org.jetbrains.anko:anko-support-v4:$anko_version"

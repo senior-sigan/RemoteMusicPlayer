@@ -14,3 +14,15 @@ data class AudioInfo(
 ): Serializable {
     val name = "$artist - $title"
 }
+
+data class TrackModel(
+        val artist: String?,
+        val title: String?,
+        val url: String
+): Serializable
+
+data class CommonResponse(
+        val success: Boolean,
+        val error: String?,
+        val data: Any?
+): Serializable
