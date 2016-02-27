@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import com.google.gson.GsonBuilder
 import com.vk.sdk.VKSdk
+import okhttp3.OkHttpClient
 
 const val TAG = "MusicRoom"
 
@@ -12,6 +13,8 @@ class App: Application() {
         val CAN_USE_INTERNET = 0x1
         private val gsonBuilder = GsonBuilder()
         private val gson = gsonBuilder.create()
+        val okHttp = OkHttpClient()
+        lateinit var coverSearch: CoverSearch
 
         fun toJson(data: Any?): String {
             return gson.toJson(data)
@@ -30,5 +33,6 @@ class App: Application() {
     override fun onCreate() {
         super.onCreate()
         VKSdk.initialize(applicationContext)
+        coverSearch = LastfmCoverSearch(getString(R.string.lastfm_key))
     }
 }

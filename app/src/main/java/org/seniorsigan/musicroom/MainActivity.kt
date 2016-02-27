@@ -2,8 +2,6 @@ package org.seniorsigan.musicroom
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -14,6 +12,7 @@ import android.view.MenuItem
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import com.squareup.picasso.Picasso
 import com.vk.sdk.VKAccessToken
 import com.vk.sdk.VKCallback
 import com.vk.sdk.VKSdk
@@ -22,7 +21,6 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.jetbrains.anko.*
 import java.util.*
-import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
     private lateinit var server: Server
@@ -39,29 +37,26 @@ class MainActivity : AppCompatActivity() {
             artistView.text = (track.artist ?: "Unknown artist")
             coverView.image = resources.getDrawable(
                     R.drawable.default_album_art_big_card, theme)
+            playPauseBtn.image = resources.getDrawable(
+                    android.R.drawable.ic_media_pause, theme)
         }
         try {
             MusicPlayer.playMusic(track)
+
+            App.coverSearch.search(track.title ?: "", track.artist ?: "", { url ->
+                Log.i(TAG, url ?: "empty cover")
+                if (url != null) {
+                    onUiThread {
+                        Picasso.with(applicationContext)
+                                .load(url)
+                                .placeholder(R.drawable.default_album_art_big_card)
+                                .error(R.drawable.default_album_art_big_card)
+                                .into(coverView)
+                    }
+                }
+            })
         } catch (e: Exception) {
             Log.e(TAG, e.message, e)
-        }
-        thread {
-            val audioInfo = MusicPlayer.retrieveInfo(track.url)
-            onUiThread {
-                with(audioInfo, {
-                    if (picture != null) {
-                        coverView.image = BitmapDrawable(
-                                resources,
-                                BitmapFactory.decodeByteArray(picture, 0, picture.size))
-                    } else {
-                        coverView.image = resources.getDrawable(
-                                R.drawable.default_album_art_big_card, theme)
-                    }
-
-                    playPauseBtn.image = resources.getDrawable(
-                            android.R.drawable.ic_media_pause, theme)
-                })
-            }
         }
     }
 
