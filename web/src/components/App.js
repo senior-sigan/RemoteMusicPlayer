@@ -2,6 +2,7 @@ import React from 'react';
 import { Link }  from 'react-router';
 import SearchForm from './SearchForm';
 import TrackList from './TrackList';
+import AppBar from 'material-ui/lib/app-bar';
 
 export default React.createClass({
   getInitialState() {
@@ -13,9 +14,7 @@ export default React.createClass({
   render() {
     return (
       <div>
-        <header>
-          <h1>Music room</h1>
-        </header>
+        <AppBar title='Music Room'/>
         <section>
           <SearchForm onSearchSubmit={this.handleSearch}/>
           <TrackList data={this.state.data} />

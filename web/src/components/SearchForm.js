@@ -1,5 +1,8 @@
 import React from 'react';
 import 'whatwg-fetch';
+import TextField from 'material-ui/lib/text-field';
+import IconButton from 'material-ui/lib/icon-button';
+import SearchIcon from 'material-ui/lib/svg-icons/action/search';
 
 export default React.createClass({
   getInitialState() {
@@ -8,13 +11,14 @@ export default React.createClass({
   handleSearchChange(e) {
     this.setState({q: e.target.value});
   },
-  handleSearch(e) {
-    e.preventDefault();
-    const url = e.target.action;
+  handleSearch() {
     const q = this.state.q.trim();
-    if (!q) return;
-    this.setState({q: ''});
-    fetch(`${url}?q=${q}`, {
+    if (!q) {
+      this.props.onSearchSubmit([]);
+      return;
+    }
+    const url = `/api/vk.json?q=${q}`;
+    fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json;charset=UTF-8'
@@ -23,23 +27,22 @@ export default React.createClass({
       if (data.success) {
         this.props.onSearchSubmit(data.data);
       } else {
-        throw new Error(data.error);
+        // TODO: handle error
       }
     });
   },
   render() {
     return (
-      <form id='search' action='/api/vk.json' method='get' onSubmit={this.handleSearch}>
-        <input
-          autoComplete='off'
-          autoCorrect='off'
-          name='q'
-          type='text'
-          placeholder='find music'
-          value={this.state.q}
-          onChange={this.handleSearchChange} />
-        <input type='submit' value='Search'></input>
-      </form>
+      <div>
+      <TextField
+        hintText='Find music'
+        value={this.state.q}
+        onEnterKeyDown={this.handleSearch}
+        onChange={this.handleSearchChange}/>
+      <IconButton onTouchTap={this.handleSearch}>
+        <SearchIcon />
+      </IconButton>
+    </div>
     )
   }
 });

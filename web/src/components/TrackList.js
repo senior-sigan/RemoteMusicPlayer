@@ -1,5 +1,6 @@
 import React from 'react';
 import Track from './Track';
+import List from 'material-ui/lib/lists/list';
 
 export default React.createClass({
   render() {
@@ -9,9 +10,9 @@ export default React.createClass({
       );
     });
     return (
-      <div className='trackList'>
+      <List>
         {list}
-      </div>
+      </List>
     )
   }
 });

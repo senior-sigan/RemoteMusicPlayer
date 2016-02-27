@@ -1,9 +1,0 @@
-.track {
-  padding-top: 5px;
-  padding-bottom: 5px;
-  cursor: pointer;
-}
-
-.track:hover {
-  background-color: #edf1f5;
-}
