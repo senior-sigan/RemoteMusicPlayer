@@ -20,7 +20,7 @@ class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
     override fun addMappings() {
         super.addMappings()
         addRoute("/api/vk.json", VkHandler::class.java)
-        addRoute("/api/url", BaseHandler::class.java)
+        addRoute("/api/url.json", BaseHandler::class.java)
         addRoute("/(.)+", StaticHandler::class.java, manager)
         addRoute("/", StaticHandler::class.java, manager)
     }
@@ -32,7 +32,7 @@ class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
             throw UnsupportedOperationException()
         }
 
-        override fun getStatus() = Response.Status.NOT_IMPLEMENTED
+        override fun getStatus() = Response.Status.OK
 
         override fun get(uriResource: UriResource?, urlParams: MutableMap<String, String>?, session: IHTTPSession?): Response? {
             Log.d(TAG, "Call VK search")
@@ -51,7 +51,7 @@ class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
                             Log.i(TAG, "Found info ${response.json}")
                             val data = response.parsedModel as VkAudioArray
                             tracks.addAll(data.map {
-                                TrackModel(it.artist, it.title, it.url)
+                                TrackModel(id=it.id,artist=it.artist,title= it.title,url= it.url)
                             })
                         }
                     }
@@ -75,15 +75,21 @@ class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
         override fun getMimeType() = MIME_PLAINTEXT
 
         override fun get(uriResource: UriResource?, urlParams: MutableMap<String, String>?, session: IHTTPSession?): Response? {
-            val url = session?.parms?.get("q") ?: return NanoHTTPD.newFixedLengthResponse("Q can't be empty")
-            try {
-                val info = MusicPlayer.retrieveInfo(url)
-                EventBus.getDefault().post(info)
-                return NanoHTTPD.newFixedLengthResponse(info.name)
-            } catch (e: Exception) {
-                Log.e(TAG, e.message, e)
-                return NanoHTTPD.newFixedLengthResponse(e.message)
+            if (session?.method == Method.POST) {
+                val body: MutableMap<String, String> = mutableMapOf()
+                session?.parseBody(body)
+                val data = App.parseJson(body["postData"], TrackForm::class.java) ?: return NanoHTTPD.newFixedLengthResponse(Response.Status.BAD_REQUEST, MIME_PLAINTEXT, "Bad form data")
+                try {
+                    val info = MusicPlayer.retrieveInfo(data.url)
+                    EventBus.getDefault().post(info)
+                    return NanoHTTPD.newFixedLengthResponse(info.name)
+                } catch (e: Exception) {
+                    Log.e(TAG, e.message, e)
+                    return NanoHTTPD.newFixedLengthResponse(e.message)
+                }
             }
+
+            return NanoHTTPD.newFixedLengthResponse(Response.Status.NOT_FOUND, MIME_PLAINTEXT, "Not found")
         }
     }
 

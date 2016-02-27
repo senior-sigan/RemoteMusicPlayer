@@ -16,6 +16,7 @@ data class AudioInfo(
 }
 
 data class TrackModel(
+        val id: Int,
         val artist: String?,
         val title: String?,
         val url: String
@@ -26,3 +27,7 @@ data class CommonResponse(
         val error: String?,
         val data: Any?
 ): Serializable
+
+data class TrackForm(
+        val url: String = ""
+)

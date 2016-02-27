@@ -8,7 +8,7 @@ export default React.createClass({
     return {data: []};
   },
   handleSearch(data) {
-    console.log(data);
+    this.setState({data});
   },
   render() {
     return (

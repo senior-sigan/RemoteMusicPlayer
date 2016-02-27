@@ -16,6 +16,15 @@ class App: Application() {
         fun toJson(data: Any?): String {
             return gson.toJson(data)
         }
+
+        fun <T> parseJson(data: String?, clazz: Class<T>): T? {
+            try {
+                return gson.fromJson(data, clazz)
+            } catch (e: Exception) {
+                Log.e(TAG, e.message, e)
+                return null
+            }
+        }
     }
 
     override fun onCreate() {

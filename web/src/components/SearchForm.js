@@ -14,18 +14,25 @@ export default React.createClass({
     const q = this.state.q.trim();
     if (!q) return;
     this.setState({q: ''});
-    fetch(url, {
+    fetch(`${url}?q=${q}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json;charset=UTF-8'
       },
-      body: {q}
-    }).then(res => res.json()).then(data => this.props.onSearchSubmit(data));
+    }).then(res => res.json()).then(data => {
+      if (data.success) {
+        this.props.onSearchSubmit(data.data);
+      } else {
+        throw new Error(data.error);
+      }
+    });
   },
   render() {
     return (
       <form id='search' action='/api/vk.json' method='get' onSubmit={this.handleSearch}>
         <input
+          autoComplete='off'
+          autoCorrect='off'
           name='q'
           type='text'
           placeholder='find music'
