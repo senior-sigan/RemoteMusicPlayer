@@ -1,7 +1,15 @@
 import React from 'react';
 import { Link }  from 'react-router';
+import SearchForm from './SearchForm';
+import TrackList from './TrackList';
 
 export default React.createClass({
+  getInitialState() {
+    return {data: []};
+  },
+  handleSearch(data) {
+    console.log(data);
+  },
   render() {
     return (
       <div>
@@ -9,10 +17,8 @@ export default React.createClass({
           <h1>Music room</h1>
         </header>
         <section>
-          <form id='search' action='/api/vk.json' method='get'>
-            <input name='q' type='search' placeholder='find music'></input>
-            <input type='submit' value='Search'></input>
-          </form>
+          <SearchForm onSearchSubmit={this.handleSearch}/>
+          <TrackList data={this.state.data} />
         </section>
       </div>
     )
