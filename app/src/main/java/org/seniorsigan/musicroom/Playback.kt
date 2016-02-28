@@ -107,8 +107,14 @@ class Playback(
         configMediaPlayerState()
     }
 
-    override fun onSeekComplete(p0: MediaPlayer?) {
-        throw UnsupportedOperationException()
+    override fun onSeekComplete(mp: MediaPlayer?) {
+        currentPosition = mp!!.currentPosition
+        if (state == PlaybackState.STATE_BUFFERING) {
+            mediaPlayer?.start()
+            state = PlaybackState.STATE_PLAYING
+        }
+
+        cb?.onPlaybackStatusChanged(state)
     }
 
     fun isPlaying(): Boolean {
