@@ -28,6 +28,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var titleView: TextView
     private lateinit var artistView: TextView
     private lateinit var playPauseBtn: ImageButton
+    private lateinit var playback: Playback
+
+    fun clearView() {
+        titleView.text = "Unknown title"
+        artistView.text = "Unknown artist"
+        coverView.image = resources.getDrawable(
+                R.drawable.default_album_art_big_card, theme)
+        playPauseBtn.image = resources.getDrawable(
+                android.R.drawable.ic_media_play, theme)
+    }
 
     @Subscribe
     fun onAudioAdded(track: TrackForm) {
@@ -41,7 +51,8 @@ class MainActivity : AppCompatActivity() {
                     android.R.drawable.ic_media_pause, theme)
         }
         try {
-            MusicPlayer.playMusic(track)
+            //MusicPlayer.playMusic(track)
+            playback.play(track.url)
 
             App.coverSearch.search(track.title ?: "", track.artist ?: "", { url ->
                 Log.i(TAG, url ?: "empty cover")
@@ -78,6 +89,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         server = Server(assets)
+        playback = Playback(baseContext)
         setContentView(R.layout.activity_main)
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
@@ -86,9 +98,9 @@ class MainActivity : AppCompatActivity() {
         artistView = find<TextView>(R.id.artistText)
         playPauseBtn = find<ImageButton>(R.id.playPauseButton)
         playPauseBtn.onClick {
-            if (MusicPlayer.playPause()) {
-                playPauseBtn.image = resources.getDrawable(
-                        android.R.drawable.ic_media_pause, theme)
+            if (playback.isPlaying()) {
+                playback.stop(true)
+                clearView()
             } else {
                 playPauseBtn.image = resources.getDrawable(
                         android.R.drawable.ic_media_play, theme)
@@ -125,7 +137,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         stopServer()
-        MusicPlayer.dispose()
+        playback.release()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
