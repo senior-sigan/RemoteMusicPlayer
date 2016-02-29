@@ -47,15 +47,15 @@ class Playback(
     val audioNoisyReceiver = object: BroadcastReceiver() {
         override fun onReceive(ctx: Context?, intent: Intent?) {
             Log.i(TAG, "audioNoiseReceiver called!")
-//            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent?.action)) {
-//                Log.d(TAG, "Headphones disconnected.");
-//                if (isPlaying()) {
-//                    val i = Intent(context, MusicService::class.java)
-//                    i.action = MusicService.ACTION_CMD
-//                    i.putExtra(MusicService.CMD_NAME, MusicService.CMD_PAUSE)
-//                    context.startService(i)
-//                }
-//            }
+            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent?.action)) {
+                Log.d(TAG, "Headphones disconnected.");
+                if (isPlaying()) {
+                    val i = Intent(context, MusicService::class.java)
+                    i.action = MusicService.ACTION_CMD
+                    i.putExtra(MusicService.CMD_NAME, MusicService.CMD_PAUSE)
+                    context.startService(i)
+                }
+            }
         }
     }
     /**
@@ -118,7 +118,7 @@ class Playback(
     }
 
     fun isPlaying(): Boolean {
-        return playOnFocusGain || mediaPlayer?.isPlaying as Boolean
+        return playOnFocusGain || mediaPlayer?.isPlaying ?: false
     }
 
     fun getCurrentStreamPosition(): Int {
@@ -132,7 +132,7 @@ class Playback(
     fun pause() {
         if (state == PlaybackState.STATE_PLAYING) {
             // Pause media player and cancel the 'foreground service' state.
-            if (mediaPlayer?.isPlaying as Boolean) {
+            if (mediaPlayer?.isPlaying ?: false) {
                 mediaPlayer?.pause()
                 currentPosition = mediaPlayer!!.currentPosition
             }
@@ -194,7 +194,7 @@ class Playback(
             // If we do not have a current media player, simply update the current position
             currentPosition = position
         } else {
-            if (mediaPlayer?.isPlaying as Boolean) {
+            if (mediaPlayer?.isPlaying ?: false) {
                 state = PlaybackState.STATE_BUFFERING
             }
             mediaPlayer?.seekTo(position)

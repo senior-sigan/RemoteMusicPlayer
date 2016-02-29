@@ -1,6 +1,51 @@
 package org.seniorsigan.musicroom
 
-class MusicService {
+import android.app.PendingIntent
+import android.content.Intent
+import android.media.browse.MediaBrowser
+import android.media.session.MediaSession
+import android.os.Bundle
+import android.service.media.MediaBrowserService
+import android.util.Log
+
+class MusicService: MediaBrowserService() {
+    lateinit var queueManager: QueueManager
+    lateinit var playback: Playback
+    lateinit var session: MediaSession
+    lateinit var mediaNotification: MediaNotificationManager
+
+    override fun onLoadChildren(parentMediaId: String?, result: Result<MutableList<MediaBrowser.MediaItem>>?) {
+        Log.d(TAG, "OnLoadChildren parentMediaId=$parentMediaId")
+    }
+
+    override fun onGetRoot(clientPackageName: String?, clientUid: Int, rootHints: Bundle?): BrowserRoot? {
+        Log.d(TAG, "OnGetRoot clientPackageName=$clientPackageName, clientUid=$clientUid")
+        return BrowserRoot("__ROOT__", null)
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        Log.d(TAG, "onCreate from MusicService")
+        queueManager = QueueManager()
+        playback = Playback(this)
+        session = MediaSession(this, "MusicService")
+        sessionToken = session.sessionToken
+        session.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS or MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS)
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        val pi = PendingIntent.getActivity(applicationContext, 99, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        session.setSessionActivity(pi)
+        mediaNotification = MediaNotificationManager(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy from MusicService")
+        mediaNotification.stopNotification()
+        session.release()
+        // TODO: may be some playback manager do it?
+        playback.stop(false)
+    }
+
     companion object {
         // The action of the incoming Intent indicating that it contains a command
         // to be executed (see {@link #onStartCommand})
