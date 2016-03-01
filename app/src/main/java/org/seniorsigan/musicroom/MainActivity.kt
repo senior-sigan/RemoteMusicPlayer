@@ -1,7 +1,9 @@
 package org.seniorsigan.musicroom
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.media.browse.MediaBrowser
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -29,6 +31,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var artistView: TextView
     private lateinit var playPauseBtn: ImageButton
     private lateinit var playback: Playback
+    private lateinit var mediaBrowser: MediaBrowser
+
+    val connectionCallback = object: MediaBrowser.ConnectionCallback() {
+        override fun onConnected() {
+            Log.d(TAG, "Connected to MediaBrowser")
+        }
+    }
 
     fun clearView() {
         titleView.text = "Unknown title"
@@ -79,11 +88,13 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+        mediaBrowser.disconnect()
     }
 
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
+        mediaBrowser.connect()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,6 +118,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         restartServer()
+        mediaBrowser = MediaBrowser(this, ComponentName(this, MusicService::class.java), connectionCallback, null)
     }
 
     private fun restartServer() {

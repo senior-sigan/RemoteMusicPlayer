@@ -4,13 +4,39 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.media.browse.MediaBrowser
 import android.media.session.MediaSession
+import android.media.session.PlaybackState
 import android.os.Bundle
 import android.service.media.MediaBrowserService
 import android.util.Log
 
-class MusicService: MediaBrowserService() {
+class MusicService: MediaBrowserService(), PlaybackManager.PlaybackServiceCallback {
+    init {
+        Log.d("TAG", "MusicService constructor")
+    }
+
+    override fun onPlaybackStart() {
+        if (!session.isActive) {
+            session.isActive = true
+        }
+
+        startService(Intent(applicationContext, MusicService::class.java))
+    }
+
+    override fun onNotificationRequired() {
+        throw UnsupportedOperationException()
+    }
+
+    override fun onPlaybackStop() {
+        throw UnsupportedOperationException()
+    }
+
+    override fun onPlaybackStateUpdated(newState: PlaybackState) {
+        throw UnsupportedOperationException()
+    }
+
     lateinit var queueManager: QueueManager
     lateinit var playback: Playback
+    lateinit var playbackManager: PlaybackManager
     lateinit var session: MediaSession
     lateinit var mediaNotification: MediaNotificationManager
 
@@ -28,6 +54,7 @@ class MusicService: MediaBrowserService() {
         Log.d(TAG, "onCreate from MusicService")
         queueManager = QueueManager()
         playback = Playback(this)
+        playbackManager = PlaybackManager(this, playback)
         session = MediaSession(this, "MusicService")
         sessionToken = session.sessionToken
         session.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS or MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS)

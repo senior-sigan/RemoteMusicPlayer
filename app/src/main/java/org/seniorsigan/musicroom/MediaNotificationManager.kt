@@ -2,6 +2,7 @@ package org.seniorsigan.musicroom
 
 import android.app.Notification
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -15,11 +16,26 @@ class MediaNotificationManager(val musicService: MusicService): BroadcastReceive
         val ACTION_PAUSE = "org.seniorsigan.musicroom.pause"
         val ACTION_PLAY = "org.seniorsigan.musicroom.play"
         val NOTIFICATION_ID = 3124 // MAGIC NUMBER
+        val REQIEST_CODE = 100
     }
 
     var started: Boolean = false
     val notificationManager: NotificationManager by lazy {
         musicService.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    }
+    val pauseIntent: PendingIntent by lazy {
+        PendingIntent.getBroadcast(
+                musicService,
+                REQIEST_CODE,
+                Intent(ACTION_PAUSE).setPackage(musicService.packageName),
+                PendingIntent.FLAG_CANCEL_CURRENT)
+    }
+    val playIntent: PendingIntent by lazy {
+        PendingIntent.getBroadcast(
+                musicService,
+                REQIEST_CODE,
+                Intent(ACTION_PLAY).setPackage(musicService.packageName),
+                PendingIntent.FLAG_CANCEL_CURRENT)
     }
 
     init {
