@@ -79,6 +79,6 @@ class ServerService: Service() {
     }
 
     companion object {
-        val ACTION_STOP = "org.seniorsigan.musicroom.ACTION_STOP"
+        val ACTION_STOP = "org.seniorsigan.musicroom.ACTION_STOP_SERVER"
     }
 }

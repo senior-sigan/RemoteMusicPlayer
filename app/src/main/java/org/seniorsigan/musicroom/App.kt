@@ -15,7 +15,7 @@ class App: Application() {
         private val gson = gsonBuilder.create()
         val okHttp = OkHttpClient()
         lateinit var coverSearch: CoverSearch
-        val queue: QueueManager = QueueManager()
+        lateinit var queue: QueueManager
 
         fun toJson(data: Any?): String {
             return gson.toJson(data)
@@ -35,5 +35,6 @@ class App: Application() {
         super.onCreate()
         VKSdk.initialize(applicationContext)
         coverSearch = LastfmCoverSearch(getString(R.string.lastfm_key))
+        queue = QueueManager(this)
     }
 }

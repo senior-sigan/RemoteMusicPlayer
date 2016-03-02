@@ -26,25 +26,25 @@ const val AUDIO_FOCUSED  = 2;
 
 
 class Playback(
-        val context: Context
+        private val context: Context,
+        private val cb: Callback? = null
 ): AudioManager.OnAudioFocusChangeListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnSeekCompleteListener {
-    val wifiLock: WifiManager.WifiLock by lazy {
+    private val wifiLock: WifiManager.WifiLock by lazy {
         val wifiService = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
         wifiService.createWifiLock(WifiManager.WIFI_MODE_FULL, "uAmp_lock")
     }
-    val audioManager: AudioManager by lazy {
+    private val audioManager: AudioManager by lazy {
         context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
     var state: Int = PlaybackState.STATE_NONE
-    var audioFocus: Int = 0
-    var mediaPlayer: MediaPlayer? = null
-    var playOnFocusGain: Boolean = false
-    @Volatile var currentPosition = 0
-    @Volatile var audioNoisyReceiverRegistered: Boolean = false
-    var cb: Callback? = null
+    private var audioFocus: Int = 0
+    private var mediaPlayer: MediaPlayer? = null
+    private var playOnFocusGain: Boolean = false
+    @Volatile private var currentPosition = 0
+    @Volatile private var audioNoisyReceiverRegistered: Boolean = false
 
-    val audioNoisyIntentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
-    val audioNoisyReceiver = object: BroadcastReceiver() {
+    private val audioNoisyIntentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
+    private val audioNoisyReceiver = object: BroadcastReceiver() {
         override fun onReceive(ctx: Context?, intent: Intent?) {
             Log.i(TAG, "audioNoiseReceiver called!")
 //            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent?.action)) {
@@ -213,7 +213,6 @@ class Playback(
         currentPosition = getCurrentStreamPosition()
         // Give up Audio focus
         giveUpAudioFocus()
-        unregisterAudioNoisyReceiver()
         // Relax all resources
         relaxResources(true)
     }
@@ -315,6 +314,7 @@ class Playback(
      */
     private fun relaxResources(releaseMediaPlayer: Boolean) {
         Log.d(TAG, "relaxResources. releaseMediaPlayer=$releaseMediaPlayer");
+        unregisterAudioNoisyReceiver()
 
         // stop and release the Media Player, if it's available
         if (releaseMediaPlayer && mediaPlayer != null) {

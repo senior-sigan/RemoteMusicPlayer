@@ -10,7 +10,6 @@ import com.vk.sdk.api.VKResponse
 import com.vk.sdk.api.model.VkAudioArray
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.router.RouterNanoHTTPD
-import org.greenrobot.eventbus.EventBus
 
 class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
     init {
@@ -80,7 +79,6 @@ class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
                 val data = App.parseJson(body["postData"], TrackForm::class.java) ?: return NanoHTTPD.newFixedLengthResponse(Response.Status.BAD_REQUEST, MIME_PLAINTEXT, "Bad form data")
                 try {
                     App.queue.add(data)
-                    EventBus.getDefault().post(data)
                     return NanoHTTPD.newFixedLengthResponse(data.name)
                 } catch (e: Exception) {
                     Log.e(TAG, e.message, e)

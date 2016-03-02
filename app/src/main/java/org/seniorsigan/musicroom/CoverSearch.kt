@@ -32,7 +32,7 @@ class LastfmCoverSearch(val apiSecret: String): CoverSearch {
                 if (res.isSuccessful) {
                     val raw = res.body().string().replace("#text", "text")
                     val data = App.parseJson(raw, LastFM::class.java)
-                    cb.invoke(data?.track?.album?.image?.lastOrNull()?.text)
+                    cb(data?.track?.album?.image?.lastOrNull()?.text)
                 } else {
                     Log.i(TAG, res.message())
                 }

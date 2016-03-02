@@ -30,6 +30,7 @@
             android:theme="@style/VK.Transparent" />
 
         <service android:name=".ServerService" />
+        <service android:name=".MusicService" />
     </application>
 
 </manifest>

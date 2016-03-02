@@ -1,8 +1,9 @@
 package org.seniorsigan.musicroom
 
+import android.graphics.Bitmap
 import java.io.Serializable
 
-data class AudioPlayedMessage(val title: String): Serializable
+class AudioPlayedMessage(): Serializable
 
 data class AudioInfo(
         val artist: String?,
@@ -40,7 +41,8 @@ data class TrackForm(
 data class Track(
         val url: String,
         val title: String,
-        val artist: String
+        val artist: String,
+        val cover: Bitmap
 ): Serializable {
     val name: String
         get() = "$artist - $title"
