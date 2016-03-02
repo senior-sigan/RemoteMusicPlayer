@@ -41,7 +41,7 @@ android {
 
 ext {
     anko_version = '0.8.2'
-    support_version = '23.1.1'
+    support_version = '23.2.0'
     nanohttpd_version = '2.2.0'
     eventbus_version = '3.0.0'
 }
@@ -65,5 +65,5 @@ dependencies {
     compile "org.jetbrains.anko:anko-appcompat-v7:$anko_version"
 
     compile 'com.vk:androidsdk:1.6.2'
-    compile 'com.android.support:design:23.1.1'
+    compile "com.android.support:design:$support_version"
 }

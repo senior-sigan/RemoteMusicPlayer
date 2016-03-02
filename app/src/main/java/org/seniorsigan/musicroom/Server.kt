@@ -37,7 +37,7 @@ class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
         override fun get(uriResource: UriResource?, urlParams: MutableMap<String, String>?, session: IHTTPSession?): Response? {
             Log.d(TAG, "Call VK search")
             val query = session?.parms?.get("q") ?: ""
-            val msg = if (VKSdk.isLoggedIn()) {
+            if (VKSdk.isLoggedIn()) {
                 val req = VKApi.audio().search(
                         VKParameters(mapOf(
                                 "auto_complete" to 1,
@@ -57,11 +57,10 @@ class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
                     }
                 })
 
-                CommonResponse(true, null, tracks)
+                return NanoHTTPD.newFixedLengthResponse(status, mimeType, App.toJson(CommonResponse(true, null, tracks)))
             } else {
-                CommonResponse(false, "vk should be connected", null)
+                return NanoHTTPD.newFixedLengthResponse(Response.Status.UNAUTHORIZED, mimeType, App.toJson(CommonResponse(false, "vk should be connected", null)))
             }
-            return NanoHTTPD.newFixedLengthResponse(status, mimeType, App.toJson(msg))
         }
     }
 

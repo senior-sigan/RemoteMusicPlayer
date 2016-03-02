@@ -1,8 +1,6 @@
 package org.seniorsigan.musicroom
 
-import android.content.Context
 import android.content.Intent
-import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -19,11 +17,12 @@ import com.vk.sdk.VKSdk
 import com.vk.sdk.api.VKError
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import org.jetbrains.anko.*
-import java.util.*
+import org.jetbrains.anko.find
+import org.jetbrains.anko.image
+import org.jetbrains.anko.onClick
+import org.jetbrains.anko.onUiThread
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var server: Server
     private lateinit var coverView: ImageView
     private lateinit var titleView: TextView
     private lateinit var artistView: TextView
@@ -88,7 +87,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        server = Server(assets)
         playback = Playback(baseContext)
         setContentView(R.layout.activity_main)
         val toolbar = findViewById(R.id.toolbar) as Toolbar
@@ -106,37 +104,11 @@ class MainActivity : AppCompatActivity() {
                         android.R.drawable.ic_media_play, theme)
             }
         }
-        restartServer()
-    }
-
-    private fun restartServer() {
-        val wifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
-        val ipAddress = wifiManager.connectionInfo.ipAddress
-        val formattedIpAddress = String.format(
-                Locale.ENGLISH, "%d.%d.%d.%d",
-                ipAddress and 0xff, ipAddress shr 8 and 0xff,
-                ipAddress shr 16 and 0xff, ipAddress shr 24 and 0xff)
-
-        try {
-            server.stop()
-            server.start()
-        } catch (e: Exception) {
-            Log.e(TAG, e.message, e)
-        }
-
-        toast("Listen http://" + formattedIpAddress + ":" + Server.PORT)
-        Log.i(TAG, "Listen http://" + formattedIpAddress + ":" + Server.PORT)
-    }
-
-    private fun stopServer() {
-        server.stop()
-        Log.i(TAG, "Server was stopped")
-        toast("Server was stopped")
+        startService(Intent(this, ServerService::class.java))
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        stopServer()
         playback.release()
     }
 
