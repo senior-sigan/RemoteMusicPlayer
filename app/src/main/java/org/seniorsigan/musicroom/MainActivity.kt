@@ -84,14 +84,16 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
+        startService(Intent(this, ServerService::class.java))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        playback = Playback(baseContext)
+        Log.d(TAG, "MainActivity onCreate")
         setContentView(R.layout.activity_main)
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
+        playback = Playback(baseContext)
         coverView = find<ImageView>(R.id.coverView)
         titleView = find<TextView>(R.id.titleText)
         artistView = find<TextView>(R.id.artistText)
@@ -105,7 +107,6 @@ class MainActivity : AppCompatActivity() {
                         android.R.drawable.ic_media_play, theme)
             }
         }
-        startService(Intent(this, ServerService::class.java))
     }
 
     override fun onDestroy() {

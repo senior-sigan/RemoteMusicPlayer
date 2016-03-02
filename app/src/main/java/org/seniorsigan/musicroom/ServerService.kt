@@ -6,25 +6,36 @@ import android.content.Intent
 import android.net.wifi.WifiManager
 import android.os.IBinder
 import android.util.Log
+import org.jetbrains.anko.notificationManager
 import org.jetbrains.anko.toast
 import java.util.*
 
 class ServerService: Service() {
+    private lateinit var notifications: Notifications
+    private lateinit var server: Server
+
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
-
-    private lateinit var notifications: Notifications
-    private lateinit var server: Server
 
     override fun onCreate() {
         super.onCreate()
         server = Server(assets)
         notifications = Notifications(this)
+        Log.d(TAG, "ServerService onCreate")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        restartServer()
+        val action = intent?.action
+        Log.d(TAG, "ServerService receive action: $action")
+
+        when(action) {
+            ACTION_STOP -> {
+                notificationManager.cancel(Notifications.SERVER_NOTIFICATION_ID)
+                stopSelf()
+            }
+            else -> restartServer()
+        }
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -54,5 +65,9 @@ class ServerService: Service() {
         Log.i(TAG, address)
         val notification = notifications.serverNotification("http://$formattedIpAddress:${Server.PORT}")
         startForeground(Notifications.SERVER_NOTIFICATION_ID, notification)
+    }
+
+    companion object {
+        val ACTION_STOP = "org.seniorsigan.musicroom.ACTION_STOP"
     }
 }
