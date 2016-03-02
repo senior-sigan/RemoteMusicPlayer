@@ -36,3 +36,12 @@ data class TrackForm(
     val name: String
         get() = "$artist - $title"
 }
+
+data class Track(
+        val url: String,
+        val title: String,
+        val artist: String
+): Serializable {
+    val name: String
+        get() = "$artist - $title"
+}

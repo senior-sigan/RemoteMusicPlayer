@@ -118,7 +118,7 @@ class Playback(
     }
 
     fun isPlaying(): Boolean {
-        return playOnFocusGain || mediaPlayer?.isPlaying as Boolean
+        return playOnFocusGain || mediaPlayer?.isPlaying ?: false
     }
 
     fun getCurrentStreamPosition(): Int {
@@ -132,7 +132,7 @@ class Playback(
     fun pause() {
         if (state == PlaybackState.STATE_PLAYING) {
             // Pause media player and cancel the 'foreground service' state.
-            if (mediaPlayer?.isPlaying as Boolean) {
+            if (mediaPlayer?.isPlaying ?: false) {
                 mediaPlayer?.pause()
                 currentPosition = mediaPlayer!!.currentPosition
             }
@@ -146,7 +146,8 @@ class Playback(
         unregisterAudioNoisyReceiver()
     }
 
-    fun play(source: String) {
+    fun play() {
+        val source = App.queue.current()?.url ?: return
         playOnFocusGain = true
         tryToGetAudioFocus()
         registerAudioNoisyReceiver()
@@ -194,7 +195,7 @@ class Playback(
             // If we do not have a current media player, simply update the current position
             currentPosition = position
         } else {
-            if (mediaPlayer?.isPlaying as Boolean) {
+            if (mediaPlayer?.isPlaying ?: false) {
                 state = PlaybackState.STATE_BUFFERING
             }
             mediaPlayer?.seekTo(position)

@@ -15,6 +15,7 @@ class App: Application() {
         private val gson = gsonBuilder.create()
         val okHttp = OkHttpClient()
         lateinit var coverSearch: CoverSearch
+        val queue: QueueManager = QueueManager()
 
         fun toJson(data: Any?): String {
             return gson.toJson(data)

@@ -39,21 +39,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Subscribe
-    fun onAudioAdded(track: TrackForm) {
+    fun onAudioAdded(t: TrackForm) {
+        val track = App.queue.current() ?: return
         Log.i(TAG, "Received $track")
         onUiThread {
-            titleView.text = (track.title ?: "Unknown title")
-            artistView.text = (track.artist ?: "Unknown artist")
+            titleView.text = track.title
+            artistView.text = track.artist
             coverView.image = resources.getDrawable(
                     R.drawable.default_album_art_big_card, theme)
             playPauseBtn.image = resources.getDrawable(
                     android.R.drawable.ic_media_pause, theme)
         }
         try {
-            //MusicPlayer.playMusic(track)
-            playback.play(track.url)
+            playback.play()
 
-            App.coverSearch.search(track.title ?: "", track.artist ?: "", { url ->
+            App.coverSearch.search(track.title, track.artist, { url ->
                 Log.i(TAG, url ?: "empty cover")
                 if (url != null) {
                     onUiThread {
@@ -78,6 +78,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+        playback.stop(false)
     }
 
     override fun onStart() {
