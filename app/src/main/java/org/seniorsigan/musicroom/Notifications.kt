@@ -56,6 +56,7 @@ class Notifications(
                 .setContentIntent(PendingIntent.getActivity(context, 0, intent, 0))
                 .addAction(stopAction)
                 .setOngoing(true)
+                .setStyle(Notification.MediaStyle())
                 .build()
 
         return notification
