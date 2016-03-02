@@ -1,18 +1,22 @@
 package org.seniorsigan.musicroom
 
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.net.wifi.WifiManager
 import android.os.IBinder
 import android.util.Log
 import org.jetbrains.anko.notificationManager
 import org.jetbrains.anko.toast
+import org.jetbrains.anko.wifiManager
 import java.util.*
 
 class ServerService: Service() {
+    @Volatile private var isRunning: Boolean = false
     private lateinit var notifications: Notifications
     private lateinit var server: Server
+    val wifiLock: WifiManager.WifiLock by lazy {
+        wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "serverService_lock")
+    }
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
@@ -41,30 +45,37 @@ class ServerService: Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        isRunning = false
         server.stop()
+        wifiLock.release()
         Log.d(TAG, "ServerService destroyed")
     }
 
     private fun restartServer() {
-        val wifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
-        val ipAddress = wifiManager.connectionInfo.ipAddress
-        val formattedIpAddress = String.format(
-                Locale.ENGLISH, "%d.%d.%d.%d",
-                ipAddress and 0xff, ipAddress shr 8 and 0xff,
-                ipAddress shr 16 and 0xff, ipAddress shr 24 and 0xff)
+        synchronized(this, {
+            if (isRunning) return
+            wifiLock.acquire()
+            val ipAddress = wifiManager.connectionInfo.ipAddress
+            val formattedIpAddress = String.format(
+                    Locale.ENGLISH, "%d.%d.%d.%d",
+                    ipAddress and 0xff, ipAddress shr 8 and 0xff,
+                    ipAddress shr 16 and 0xff, ipAddress shr 24 and 0xff)
 
-        try {
-            server.stop()
-            server.start()
-        } catch (e: Exception) {
-            Log.e(TAG, e.message, e)
-        }
+            try {
+                server.stop()
+                server.start()
+            } catch (e: Exception) {
+                Log.e(TAG, e.message, e)
+                return
+            }
 
-        val address = "Listen to http://$formattedIpAddress:${Server.PORT}"
-        toast(address)
-        Log.i(TAG, address)
-        val notification = notifications.serverNotification("http://$formattedIpAddress:${Server.PORT}")
-        startForeground(Notifications.SERVER_NOTIFICATION_ID, notification)
+            val address = "Listen to http://$formattedIpAddress:${Server.PORT}"
+            toast(address)
+            Log.i(TAG, address)
+            val notification = notifications.serverNotification("http://$formattedIpAddress:${Server.PORT}")
+            startForeground(Notifications.SERVER_NOTIFICATION_ID, notification)
+            isRunning = true
+        })
     }
 
     companion object {
