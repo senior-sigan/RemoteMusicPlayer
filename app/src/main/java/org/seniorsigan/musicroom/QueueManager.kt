@@ -34,4 +34,8 @@ class QueueManager(val context: Context) {
             EventBus.getDefault().post(current())
         }
     }
+
+    fun stop() {
+        queue = null
+    }
 }

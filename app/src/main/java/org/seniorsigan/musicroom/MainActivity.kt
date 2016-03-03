@@ -62,6 +62,12 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         EventBus.getDefault().register(this)
         startService(Intent(this, ServerService::class.java))
+        val track = App.queue.current()
+        if (track == null) {
+            clearView()
+        } else {
+            onShowTrack(track)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

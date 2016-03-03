@@ -5,6 +5,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Icon
+import android.media.session.MediaSession
+import android.media.session.MediaSessionManager
 
 class Notifications(
         val context: Context
@@ -49,6 +51,7 @@ class Notifications(
         ).build()
 
         val notification = Notification.Builder(context)
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setContentTitle(track.title)
                 .setContentText(track.artist)
                 .setSmallIcon(R.drawable.ic_action_note)
@@ -56,7 +59,8 @@ class Notifications(
                 .setContentIntent(PendingIntent.getActivity(context, 0, intent, 0))
                 .addAction(stopAction)
                 .setOngoing(true)
-                .setStyle(Notification.MediaStyle())
+                .setStyle(Notification.MediaStyle()
+                        .setShowActionsInCompactView(0))
                 .build()
 
         return notification

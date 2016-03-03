@@ -37,6 +37,7 @@ class MusicService: Service() {
 
         when(action) {
             ACTION_STOP -> {
+                App.queue.stop()
                 EventBus.getDefault().post(AudioPlayedMessage())
                 notificationManager.cancel(Notifications.MUSIC_NOTIFICATION_ID)
                 stopSelf()
