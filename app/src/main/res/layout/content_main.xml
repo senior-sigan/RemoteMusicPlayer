@@ -12,39 +12,12 @@
     tools:context="org.seniorsigan.musicroom.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Unknown title"
-        android:id="@+id/titleText"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Unknown artist"
-        android:id="@+id/artistText"
-        android:layout_below="@+id/titleText"
-        android:layout_centerHorizontal="true" />
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:id="@+id/coverView"
-        android:layout_below="@+id/artistText"
-        android:layout_centerHorizontal="true"
-        android:contentDescription="Cover"
-        android:src="@drawable/default_album_art_big_card" />
-
-    <ImageButton
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/playPauseButton"
+        android:id="@+id/button_add_vk"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:src="@android:drawable/ic_media_play"
-        android:contentDescription="PlayPause" />
+        android:text="@string/action_add_vk"
+        android:contentDescription="@string/action_add_vk" />
 </RelativeLayout>
