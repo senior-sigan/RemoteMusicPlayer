@@ -1,6 +1,7 @@
 package org.seniorsigan.musicroom
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -12,36 +13,22 @@ import com.vk.sdk.VKCallback
 import com.vk.sdk.VKSdk
 import com.vk.sdk.api.VKError
 import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
+import org.seniorsigan.musicroom.ui.PlaybackControlsFragment
 
-class MainActivity : AppCompatActivity() {
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onShowTrack(track: Track) {
-        Log.i(TAG, "Received $track")
-        startActivity(Intent(this, NowPlayingActivity::class.java))
-    }
-
-    @Subscribe
-    fun onAudioPlayed(msg: AudioPlayedMessage) {
-        Log.i(TAG, "Finished playing")
+class MainActivity : AppCompatActivity(), PlaybackControlsFragment.OnFragmentInteractionListener {
+    override fun onFragmentInteraction(uri: Uri) {
+        Log.d(TAG, "URI: $uri")
     }
 
     override fun onStop() {
         super.onStop()
         Log.d(TAG, "MainActivity onStop")
-        EventBus.getDefault().unregister(this)
     }
 
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "MainActivity onStart")
-        EventBus.getDefault().register(this)
         startService(Intent(this, ServerService::class.java))
-        val track = App.queue.current()
-        if (track != null) {
-            onShowTrack(track)
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

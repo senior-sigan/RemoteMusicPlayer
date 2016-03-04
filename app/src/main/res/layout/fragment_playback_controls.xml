@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:id="@+id/media_album_art"
+        android:src="@drawable/default_album_art_big_card"
+        android:scaleType="centerCrop"
+        android:layout_alignParentStart="true"
+        android:contentDescription="@string/currently_playing_song"
+        android:layout_width="@dimen/playback_controls_albumart_size"
+        android:layout_height="@dimen/playback_controls_albumart_size" />
+
+    <LinearLayout
+        android:id="@+id/content"
+        android:orientation="vertical"
+        android:layout_toEndOf="@id/media_album_art"
+        android:layout_toStartOf="@+id/media_play_pause"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/media_title"
+            tools:text="The music title. Could be very long"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/currently_playing_song"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?android:attr/textColorPrimary"/>
+        <TextView
+            android:id="@+id/media_artist"
+            tools:text="Famous artist you should know"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/currently_playing_artist"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/media_play_pause"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:layout_alignParentEnd="true"
+        android:background="?selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_media_play"
+        android:contentDescription="@string/play_pause" />
+</RelativeLayout>

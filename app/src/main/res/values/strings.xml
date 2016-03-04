@@ -4,4 +4,10 @@
     <string name="lastfm_key">4143cc6c22d58d8ca468db3583c4e8b6</string>
     <string name="action_settings">Settings</string>
     <string name="action_add_vk">Connect Vk</string>
+    <string name="play_pause">play or pause</string>
+    <string name="currently_playing_song">Song currently playing</string>
+    <string name="currently_playing_artist">Artist of currently playing song</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
