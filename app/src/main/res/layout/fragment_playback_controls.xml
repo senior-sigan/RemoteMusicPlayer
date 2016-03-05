@@ -16,6 +16,7 @@
     <LinearLayout
         android:id="@+id/content"
         android:orientation="vertical"
+        android:layout_marginStart="8dp"
         android:layout_toEndOf="@id/media_album_art"
         android:layout_toStartOf="@+id/media_play_pause"
         android:layout_centerVertical="true"

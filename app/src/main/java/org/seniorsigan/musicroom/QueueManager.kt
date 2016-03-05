@@ -15,9 +15,9 @@ class QueueManager(val context: Context) {
                 url = track.url,
                 title = track.title ?: "Unknown title",
                 artist = track.artist ?: "Unknown artist",
-                cover = BitmapFactory.decodeResource(context.resources, R.drawable.default_album_art_big_card))
+                cover = BitmapFactory.decodeResource(context.resources, R.drawable.default_album_art_big_card),
+                artistCover = BitmapFactory.decodeResource(context.resources, R.drawable.default_album_art_big_card))
         Log.d(TAG, "Added track to queue $queue")
-        context.startService(Intent(context, MusicService::class.java))
     }
 
     fun current(): Track? {
@@ -37,5 +37,12 @@ class QueueManager(val context: Context) {
 
     fun stop() {
         queue = null
+    }
+
+    fun updateArtist(track: Track, bitmap: Bitmap) {
+        if (current()?.url == track.url) {
+            queue = current()?.copy(artistCover = bitmap)
+            EventBus.getDefault().post(current())
+        }
     }
 }

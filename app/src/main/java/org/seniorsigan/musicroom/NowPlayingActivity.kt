@@ -3,7 +3,9 @@ package org.seniorsigan.musicroom
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.util.Log
+import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import org.greenrobot.eventbus.EventBus
@@ -20,9 +22,14 @@ class NowPlayingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_now_playing)
+        val toolbar = findViewById(R.id.toolbar) as Toolbar
         coverView = find<ImageView>(R.id.coverView)
         titleView = find<TextView>(R.id.titleText)
         artistView = find<TextView>(R.id.artistText)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_keyboard_backspace_white_24dp)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -62,4 +69,16 @@ class NowPlayingActivity : AppCompatActivity() {
                 R.drawable.default_album_art_big_card, theme)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        Log.d(TAG, "NowPlaying option selected: ${item?.itemId}")
+        return when(item?.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
+    }
 }

@@ -42,7 +42,8 @@ data class Track(
         val url: String,
         val title: String,
         val artist: String,
-        val cover: Bitmap
+        val cover: Bitmap,
+        val artistCover: Bitmap
 ): Serializable {
     val name: String
         get() = "$artist - $title"

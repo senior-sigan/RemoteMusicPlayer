@@ -12,7 +12,6 @@ import com.vk.sdk.VKAccessToken
 import com.vk.sdk.VKCallback
 import com.vk.sdk.VKSdk
 import com.vk.sdk.api.VKError
-import org.greenrobot.eventbus.EventBus
 import org.seniorsigan.musicroom.ui.PlaybackControlsFragment
 
 class MainActivity : AppCompatActivity(), PlaybackControlsFragment.OnFragmentInteractionListener {
