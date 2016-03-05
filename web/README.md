@@ -5,7 +5,7 @@
 ```
 npm install -g gulp
 npm install
-gulp build
+gulp deploy
 ```
 
 ## Developing
