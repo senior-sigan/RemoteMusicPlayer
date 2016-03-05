@@ -7,11 +7,4 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_add_vk"
-        android:orderInCategory="100"
-        android:title="@string/action_add_vk"
-        app:showAsAction="never"
-        />
 </menu>

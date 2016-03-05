@@ -8,10 +8,14 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.Button
 import com.vk.sdk.VKAccessToken
 import com.vk.sdk.VKCallback
 import com.vk.sdk.VKSdk
 import com.vk.sdk.api.VKError
+import org.jetbrains.anko.find
+import org.jetbrains.anko.onClick
 import org.seniorsigan.musicroom.ui.PlaybackControlsFragment
 
 class MainActivity : AppCompatActivity(), PlaybackControlsFragment.OnFragmentInteractionListener {
@@ -36,6 +40,11 @@ class MainActivity : AppCompatActivity(), PlaybackControlsFragment.OnFragmentInt
         setContentView(R.layout.activity_main)
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
+        val addVkButton = find<Button>(R.id.button_add_vk)
+        addVkButton.onClick { VKSdk.login(this, "audio", "offline") }
+        if (VKSdk.isLoggedIn()) {
+            addVkButton.visibility = View.GONE
+        }
     }
 
     override fun onDestroy() {
@@ -57,11 +66,6 @@ class MainActivity : AppCompatActivity(), PlaybackControlsFragment.OnFragmentInt
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true
-        }
-
-        if (id == R.id.action_add_vk) {
-            VKSdk.login(this, "audio", "offline")
             return true
         }
 
