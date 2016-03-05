@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/history_title"
+        tools:text="The music title. Could be very long"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/currently_playing_song"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="?android:attr/textColorPrimary"/>
+    <TextView
+        android:id="@+id/history_artist"
+        tools:text="Famous artist you should know"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/currently_playing_artist"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
+</LinearLayout>
