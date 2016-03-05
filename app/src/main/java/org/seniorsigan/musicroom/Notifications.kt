@@ -38,7 +38,7 @@ class Notifications(
     }
 
     fun musicNotification(track: Track): Notification? {
-        val intent = Intent(context, MainActivity::class.java)
+        val intent = Intent(context, NowPlayingActivity::class.java)
         val stopIntent = Intent(context, MusicService::class.java)
         stopIntent.action = MusicService.ACTION_STOP
 

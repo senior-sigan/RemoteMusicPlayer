@@ -18,6 +18,7 @@ class QueueManager(val context: Context) {
                 cover = BitmapFactory.decodeResource(context.resources, R.drawable.default_album_art_big_card),
                 artistCover = BitmapFactory.decodeResource(context.resources, R.drawable.default_album_art_big_card))
         Log.d(TAG, "Added track to queue $queue")
+        context.startService(Intent(context, MusicService::class.java))
     }
 
     fun current(): Track? {

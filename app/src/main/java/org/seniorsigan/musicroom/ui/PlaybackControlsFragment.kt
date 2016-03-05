@@ -30,7 +30,6 @@ class PlaybackControlsFragment : Fragment() {
     fun onShowTrack(track: Track) {
         Log.i(TAG, "Received $track")
         drawTrackView(track)
-        startActivity(Intent(context, NowPlayingActivity::class.java))
     }
 
     @Subscribe

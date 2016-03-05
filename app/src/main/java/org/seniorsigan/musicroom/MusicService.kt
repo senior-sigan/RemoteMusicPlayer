@@ -58,7 +58,7 @@ class MusicService: Service() {
         try {
             App.coverSearch.search(track.title, track.artist, { url ->
                 Log.d(TAG, "Found cover: $url")
-                url ?: return@search
+                if (url == null || url.isEmpty()) return@search
                 onUiThread {
                     Picasso.with(this).load(url).into(object : Target {
                         override fun onPrepareLoad(drawable: Drawable?) {
