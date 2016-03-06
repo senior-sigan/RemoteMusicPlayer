@@ -14,8 +14,9 @@ import org.seniorsigan.musicroom.data.HistoryModel
 class HistoryAdapter: RecyclerView.Adapter<HistoryViewHolder>() {
     var collection: List<HistoryModel> = emptyList()
         set(value) {
-            collection = value
+            field = value
             notifyDataSetChanged()
+            Log.d(TAG, "HistoryAdapter updated")
         }
 
     override fun getItemCount(): Int = collection.size
@@ -36,7 +37,6 @@ class HistoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val artist = view.find<TextView>(R.id.history_artist)
 
     fun setItem(model: HistoryModel) {
-        Log.d(TAG, "HistoryViewHolder show $model")
         title.text = model.title
         artist.text = model.artist
     }

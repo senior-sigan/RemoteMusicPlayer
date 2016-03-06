@@ -78,6 +78,12 @@ class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
                 session?.parseBody(body)
                 val data = App.parseJson(body["postData"], TrackForm::class.java) ?: return NanoHTTPD.newFixedLengthResponse(Response.Status.BAD_REQUEST, MIME_PLAINTEXT, "Bad form data")
                 try {
+                    App.historyRepository.create(
+                            artist = data.artist ?: "Unknown artist",
+                            title = data.title ?: "Unknown title",
+                            url = data.url,
+                            source = "vk"
+                    )
                     App.queue.add(data)
                     return NanoHTTPD.newFixedLengthResponse(data.name)
                 } catch (e: Exception) {

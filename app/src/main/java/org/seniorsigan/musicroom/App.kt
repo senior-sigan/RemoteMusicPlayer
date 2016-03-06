@@ -5,6 +5,8 @@ import android.util.Log
 import com.google.gson.GsonBuilder
 import com.vk.sdk.VKSdk
 import okhttp3.OkHttpClient
+import org.seniorsigan.musicroom.data.DatabaseOpenHelper
+import org.seniorsigan.musicroom.data.HistoryRepository
 
 const val TAG = "MusicRoom"
 
@@ -16,6 +18,7 @@ class App: Application() {
         val okHttp = OkHttpClient()
         lateinit var coverSearch: CoverSearch
         lateinit var queue: QueueManager
+        lateinit var historyRepository: HistoryRepository
 
         fun toJson(data: Any?): String {
             return gson.toJson(data)
@@ -36,5 +39,7 @@ class App: Application() {
         VKSdk.initialize(applicationContext)
         coverSearch = LastfmCoverSearch(getString(R.string.lastfm_key))
         queue = QueueManager(this)
+        val dbHelper = DatabaseOpenHelper.getInstance(this)
+        historyRepository = HistoryRepository(dbHelper)
     }
 }
