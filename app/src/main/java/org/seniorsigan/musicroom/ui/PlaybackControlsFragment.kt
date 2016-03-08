@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import org.greenrobot.eventbus.EventBus
@@ -18,6 +19,7 @@ import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.onClick
+import org.jetbrains.anko.startService
 import org.seniorsigan.musicroom.*
 
 class PlaybackControlsFragment : Fragment() {
@@ -25,6 +27,7 @@ class PlaybackControlsFragment : Fragment() {
     private lateinit var coverView: ImageView
     private lateinit var titleView: TextView
     private lateinit var artistView: TextView
+    private lateinit var button: ImageButton
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onShowTrack(track: Track) {
@@ -73,7 +76,14 @@ class PlaybackControlsFragment : Fragment() {
             coverView = find<ImageView>(R.id.media_album_art)
             titleView = find<TextView>(R.id.media_title)
             artistView = find<TextView>(R.id.media_artist)
+            button = find<ImageButton>(R.id.media_play_pause)
         })
+
+        val stopIntent = Intent(context, MusicService::class.java)
+        stopIntent.action = MusicService.ACTION_STOP
+        button.onClick {
+            context.startService(stopIntent)
+        }
 
         return rootView
     }
