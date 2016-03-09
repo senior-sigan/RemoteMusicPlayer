@@ -1,11 +1,11 @@
 package org.seniorsigan.musicroom.ui
 
-import android.content.Context
-import android.net.Uri
-import android.os.Bundle
 import android.app.Fragment
+import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +19,6 @@ import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.onClick
-import org.jetbrains.anko.startService
 import org.seniorsigan.musicroom.*
 
 class PlaybackControlsFragment : Fragment() {

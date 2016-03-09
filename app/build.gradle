@@ -9,18 +9,9 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
-    productFlavors {
-        dev {
-            minSdkVersion 23 // To reduce compilation time
-        }
-        prod {
-            minSdkVersion 15
-        }
-    }
-
     defaultConfig {
         applicationId "org.seniorsigan.musicroom"
-        minSdkVersion 15
+        minSdkVersion 21
         targetSdkVersion 23
         versionCode gitCommitCount
         versionName "$gitCommitCount"
@@ -61,8 +52,7 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
 
-    compile "org.jetbrains.anko:anko-sdk15:$anko_version"
-    compile "org.jetbrains.anko:anko-support-v4:$anko_version"
+    compile "org.jetbrains.anko:anko-sdk21:$anko_version"
     compile "org.jetbrains.anko:anko-appcompat-v7:$anko_version"
 
     compile 'com.vk:androidsdk:1.6.2'
