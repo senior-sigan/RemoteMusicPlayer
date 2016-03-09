@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import org.greenrobot.eventbus.EventBus
+import org.seniorsigan.musicroom.services.MusicService
 
 class QueueManager(val context: Context) {
     private var queue: Track? = null

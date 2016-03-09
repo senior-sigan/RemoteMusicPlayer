@@ -1,22 +1,21 @@
-package org.seniorsigan.musicroom
+package org.seniorsigan.musicroom.services
 
 import android.app.Service
 import android.content.Intent
-import android.net.wifi.WifiManager
 import android.os.IBinder
 import android.util.Log
 import org.jetbrains.anko.notificationManager
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.wifiManager
+import org.seniorsigan.musicroom.Notifications
+import org.seniorsigan.musicroom.Server
+import org.seniorsigan.musicroom.TAG
 import java.util.*
 
 class ServerService: Service() {
     @Volatile private var isRunning: Boolean = false
     private lateinit var notifications: Notifications
     private lateinit var server: Server
-    val wifiLock: WifiManager.WifiLock by lazy {
-        wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "serverService_lock")
-    }
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
@@ -47,14 +46,12 @@ class ServerService: Service() {
         super.onDestroy()
         isRunning = false
         server.stop()
-        wifiLock.release()
         Log.d(TAG, "ServerService destroyed")
     }
 
     private fun restartServer() {
         synchronized(this, {
             if (isRunning) return
-            wifiLock.acquire()
             val ipAddress = wifiManager.connectionInfo.ipAddress
             val formattedIpAddress = String.format(
                     Locale.ENGLISH, "%d.%d.%d.%d",

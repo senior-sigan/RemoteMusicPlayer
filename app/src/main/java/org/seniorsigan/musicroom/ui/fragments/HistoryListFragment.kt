@@ -1,4 +1,4 @@
-package org.seniorsigan.musicroom.ui
+package org.seniorsigan.musicroom.ui.fragments
 
 import android.app.Fragment
 import android.os.Bundle
@@ -53,7 +53,6 @@ class HistoryListFragment: Fragment() {
 
         refresh.onRefresh { renderList() }
         renderList()
-
 
         return rootView
     }

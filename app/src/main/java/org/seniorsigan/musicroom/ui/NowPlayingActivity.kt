@@ -1,4 +1,4 @@
-package org.seniorsigan.musicroom
+package org.seniorsigan.musicroom.ui
 
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
@@ -13,6 +13,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
+import org.seniorsigan.musicroom.*
 
 class NowPlayingActivity : AppCompatActivity() {
     private lateinit var coverView: ImageView

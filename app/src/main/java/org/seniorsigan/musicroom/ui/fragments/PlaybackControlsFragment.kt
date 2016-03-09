@@ -1,4 +1,4 @@
-package org.seniorsigan.musicroom.ui
+package org.seniorsigan.musicroom.ui.fragments
 
 import android.app.Fragment
 import android.content.Context
@@ -20,9 +20,10 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.image
 import org.jetbrains.anko.onClick
 import org.seniorsigan.musicroom.*
+import org.seniorsigan.musicroom.services.MusicService
+import org.seniorsigan.musicroom.ui.NowPlayingActivity
 
 class PlaybackControlsFragment : Fragment() {
-    private var mListener: OnFragmentInteractionListener? = null
     private lateinit var coverView: ImageView
     private lateinit var titleView: TextView
     private lateinit var artistView: TextView
@@ -90,16 +91,10 @@ class PlaybackControlsFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         Log.d(TAG, "PlaybackFragment onAttach")
-        if (context is OnFragmentInteractionListener) {
-            mListener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
-        }
     }
 
     override fun onDetach() {
         super.onDetach()
-        mListener = null
     }
 
     override fun onStart() {

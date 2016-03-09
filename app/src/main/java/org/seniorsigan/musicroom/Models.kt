@@ -5,17 +5,6 @@ import java.io.Serializable
 
 class AudioPlayedMessage(): Serializable
 
-data class AudioInfo(
-        val artist: String?,
-        val title: String?,
-        val url: String,
-        val album: String?,
-        val picture: ByteArray?
-
-): Serializable {
-    val name = "$artist - $title"
-}
-
 data class TrackModel(
         val id: Int,
         val artist: String?,

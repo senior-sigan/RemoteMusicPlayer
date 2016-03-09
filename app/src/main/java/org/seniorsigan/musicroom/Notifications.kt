@@ -5,6 +5,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Icon
+import org.seniorsigan.musicroom.services.MusicService
+import org.seniorsigan.musicroom.services.ServerService
+import org.seniorsigan.musicroom.ui.MainActivity
+import org.seniorsigan.musicroom.ui.NowPlayingActivity
 
 class Notifications(
         val context: Context

@@ -96,7 +96,7 @@ class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
         }
     }
 
-    open class StaticHandler: DefaultHandler() {
+    class StaticHandler: DefaultHandler() {
         override fun getStatus()= Response.Status.OK
 
         override fun getText(): String? {

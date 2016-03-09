@@ -1,7 +1,6 @@
-package org.seniorsigan.musicroom
+package org.seniorsigan.musicroom.ui
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -16,13 +15,22 @@ import com.vk.sdk.VKSdk
 import com.vk.sdk.api.VKError
 import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
-import org.seniorsigan.musicroom.ui.PlaybackControlsFragment
+import org.seniorsigan.musicroom.R
+import org.seniorsigan.musicroom.TAG
+import org.seniorsigan.musicroom.services.ServerService
 
-class MainActivity : AppCompatActivity(), PlaybackControlsFragment.OnFragmentInteractionListener {
+class MainActivity : AppCompatActivity() {
     private lateinit var addVkButton: Button
 
-    override fun onFragmentInteraction(uri: Uri) {
-        Log.d(TAG, "URI: $uri")
+    fun checkVkButton() {
+        Log.d(TAG, "Check vk login")
+        if (VKSdk.isLoggedIn()) {
+            Log.d(TAG, "Logged in VK")
+            addVkButton.visibility = View.GONE
+        } else {
+            Log.d(TAG, "Not logged in VK")
+            addVkButton.visibility = View.VISIBLE
+        }
     }
 
     override fun onStop() {
@@ -34,9 +42,7 @@ class MainActivity : AppCompatActivity(), PlaybackControlsFragment.OnFragmentInt
         super.onStart()
         Log.d(TAG, "MainActivity onStart")
         startService(Intent(this, ServerService::class.java))
-        if (VKSdk.isLoggedIn()) {
-            addVkButton.visibility = View.GONE
-        }
+        checkVkButton()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +73,9 @@ class MainActivity : AppCompatActivity(), PlaybackControlsFragment.OnFragmentInt
         val id = item.itemId
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_vk_logout) {
+            VKSdk.logout()
+            checkVkButton()
             return true
         }
 
@@ -77,17 +85,19 @@ class MainActivity : AppCompatActivity(), PlaybackControlsFragment.OnFragmentInt
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         Log.d(TAG, "Get results: $resultCode")
-        if (data != null) {
-            VKSdk.onActivityResult(requestCode, resultCode, data, object : VKCallback<VKAccessToken> {
-                override fun onError(err: VKError?) {
-                    Log.e(TAG, err?.errorMessage ?: "Unknown error")
-                }
 
-                override fun onResult(token: VKAccessToken?) {
-                    Log.d(TAG, token?.email)
-                    addVkButton.visibility = View.GONE
-                }
-            })
+        Log.d(TAG, "Receive data $data")
+        if (VKSdk.onActivityResult(requestCode, resultCode, data ?: Intent(), object : VKCallback<VKAccessToken> {
+            override fun onError(err: VKError?) {
+                Log.e(TAG, err?.errorMessage ?: "Unknown error")
+            }
+
+            override fun onResult(token: VKAccessToken?) {
+                Log.d(TAG, "Vk user: ${token?.userId}")
+                addVkButton.visibility = View.GONE
+            }
+        })) {
+            checkVkButton()
         }
     }
 }

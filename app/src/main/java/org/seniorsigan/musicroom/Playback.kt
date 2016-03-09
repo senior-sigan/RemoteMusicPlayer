@@ -7,7 +7,6 @@ import android.content.IntentFilter
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.session.PlaybackState
-import android.net.wifi.WifiManager
 import android.os.PowerManager
 import android.util.Log
 
@@ -29,10 +28,6 @@ class Playback(
         private val context: Context,
         private val cb: Callback? = null
 ): AudioManager.OnAudioFocusChangeListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnSeekCompleteListener {
-    private val wifiLock: WifiManager.WifiLock by lazy {
-        val wifiService = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        wifiService.createWifiLock(WifiManager.WIFI_MODE_FULL, "uAmp_lock")
-    }
     private val audioManager: AudioManager by lazy {
         context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
@@ -173,11 +168,6 @@ class Playback(
                 // listener to 'this'). Until the media player is prepared,
                 // we *cannot* call start() on it!
                 mediaPlayer?.prepareAsync()
-
-                // If we are streaming from the internet, we want to hold a
-                // Wifi lock, which prevents the Wifi radio from going to
-                // sleep while the song is playing.
-                wifiLock.acquire()
 
                 cb?.onPlaybackStatusChanged(state)
 
@@ -321,11 +311,6 @@ class Playback(
             mediaPlayer!!.reset()
             mediaPlayer!!.release()
             mediaPlayer = null
-        }
-
-        // we can also release the Wifi lock, if we're holding it
-        if (wifiLock.isHeld) {
-            wifiLock.release()
         }
     }
 

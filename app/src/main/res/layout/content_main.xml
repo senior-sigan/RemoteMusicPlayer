@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".MainActivity"
+    tools:context=".ui.MainActivity"
     tools:showIn="@layout/activity_main">
 
     <Button
@@ -20,7 +20,7 @@
     <fragment
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="org.seniorsigan.musicroom.ui.HistoryListFragment"
+        android:name="org.seniorsigan.musicroom.ui.fragments.HistoryListFragment"
         tools:layout="@layout/history_list_fragment"
         android:id="@+id/fragment_history_list"
         android:layout_below="@+id/button_add_vk"
@@ -35,7 +35,7 @@
         android:id="@+id/view">
 
         <fragment
-            android:name="org.seniorsigan.musicroom.ui.PlaybackControlsFragment"
+            android:name="org.seniorsigan.musicroom.ui.fragments.PlaybackControlsFragment"
             android:id="@+id/fragment_playback_controls"
             tools:layout="@layout/fragment_playback_controls"
             android:layout_alignParentBottom="true"

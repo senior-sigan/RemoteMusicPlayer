@@ -1,4 +1,4 @@
-package org.seniorsigan.musicroom
+package org.seniorsigan.musicroom.services
 
 import android.app.Service
 import android.content.Intent
@@ -11,6 +11,7 @@ import com.squareup.picasso.Target
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.notificationManager
 import org.jetbrains.anko.onUiThread
+import org.seniorsigan.musicroom.*
 
 class MusicService: Service() {
     private lateinit var notifications: Notifications
