@@ -19,6 +19,8 @@ import org.jetbrains.anko.onClick
 import org.seniorsigan.musicroom.ui.PlaybackControlsFragment
 
 class MainActivity : AppCompatActivity(), PlaybackControlsFragment.OnFragmentInteractionListener {
+    private lateinit var addVkButton: Button
+
     override fun onFragmentInteraction(uri: Uri) {
         Log.d(TAG, "URI: $uri")
     }
@@ -32,19 +34,19 @@ class MainActivity : AppCompatActivity(), PlaybackControlsFragment.OnFragmentInt
         super.onStart()
         Log.d(TAG, "MainActivity onStart")
         startService(Intent(this, ServerService::class.java))
+        if (VKSdk.isLoggedIn()) {
+            addVkButton.visibility = View.GONE
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "MainActivity onCreate")
         setContentView(R.layout.activity_main)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = find<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        val addVkButton = find<Button>(R.id.button_add_vk)
+        addVkButton = find<Button>(R.id.button_add_vk)
         addVkButton.onClick { VKSdk.login(this, "audio", "offline") }
-        if (VKSdk.isLoggedIn()) {
-            addVkButton.visibility = View.GONE
-        }
     }
 
     override fun onDestroy() {
@@ -83,6 +85,7 @@ class MainActivity : AppCompatActivity(), PlaybackControlsFragment.OnFragmentInt
 
                 override fun onResult(token: VKAccessToken?) {
                     Log.d(TAG, token?.email)
+                    addVkButton.visibility = View.GONE
                 }
             })
         }
