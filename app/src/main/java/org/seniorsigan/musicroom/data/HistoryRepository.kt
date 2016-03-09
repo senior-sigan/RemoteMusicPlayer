@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
+import org.greenrobot.eventbus.EventBus
 import org.seniorsigan.musicroom.TAG
 import java.text.SimpleDateFormat
 import java.util.*
@@ -46,6 +47,7 @@ class HistoryRepository(val db: SQLiteOpenHelper) {
             db.writableDatabase.endTransaction()
         }
         Log.d(TAG, "HistoryRepository created $model")
+        EventBus.getDefault().post(model)
         return model
     }
 
