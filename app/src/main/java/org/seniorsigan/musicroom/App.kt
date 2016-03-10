@@ -3,11 +3,15 @@ package org.seniorsigan.musicroom
 import android.app.Application
 import android.util.Log
 import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import com.vk.sdk.VKSdk
 import okhttp3.OkHttpClient
 import org.seniorsigan.musicroom.data.DatabaseOpenHelper
 import org.seniorsigan.musicroom.data.HistoryRepository
+import org.seniorsigan.musicroom.usecases.CoverSearch
+import org.seniorsigan.musicroom.usecases.LastfmCoverSearch
 import org.seniorsigan.musicroom.usecases.SoundCloudAPI
+import java.lang.reflect.Type
 
 const val TAG = "MusicRoom"
 
@@ -29,6 +33,14 @@ class App: Application() {
         fun <T> parseJson(data: String?, clazz: Class<T>): T? {
             try {
                 return gson.fromJson(data, clazz)
+            } catch (e: Exception) {
+                Log.e(TAG, e.message, e)
+                return null
+            }
+        }
+        fun <T> parseJson(data: String?, type: TypeToken<T>): T? {
+            try {
+                return gson.fromJson(data, type.type)
             } catch (e: Exception) {
                 Log.e(TAG, e.message, e)
                 return null

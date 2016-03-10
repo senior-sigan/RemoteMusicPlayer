@@ -1,4 +1,4 @@
-package org.seniorsigan.musicroom
+package org.seniorsigan.musicroom.usecases
 
 import android.net.Uri
 import android.util.Log
@@ -6,6 +6,8 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
 import okhttp3.Response
+import org.seniorsigan.musicroom.App
+import org.seniorsigan.musicroom.TAG
 import java.io.IOException
 
 interface CoverSearch {
@@ -53,23 +55,23 @@ class LastfmCoverSearch(val apiSecret: String): CoverSearch {
             appendQueryParameter("format", "json")
         }).build().toString()
 
-    data class LastFM(
+    private data class LastFM(
             val track: Track = Track()
     )
 
-    data class Track(
+    private data class Track(
             val name: String = "",
             val url: String = "",
             val album: Album = Album()
     )
 
-    data class Album(
+    private data class Album(
             val artist: String = "",
             val title: String = "",
             val image: List<AlbumImage> = emptyList()
     )
 
-    data class AlbumImage(
+    private data class AlbumImage(
             val size: String = "",
             val text: String = ""
     )
