@@ -3,5 +3,6 @@ package org.seniorsigan.musicroom.usecases
 import org.seniorsigan.musicroom.TrackInfo
 
 interface SearchAPI {
-    fun search(query: String, cb: (List<TrackInfo>) -> Unit)
+    val sourceName: String
+    fun search(query: String, cb: (success: Boolean, data: List<TrackInfo>) -> Unit)
 }

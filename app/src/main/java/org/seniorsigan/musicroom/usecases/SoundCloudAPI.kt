@@ -15,6 +15,7 @@ import java.io.IOException
 class SoundCloudAPI(
         val clientID: String
 ): SearchAPI {
+    override val sourceName: String = "soundcloud"
     val baseURL = "api.soundcloud.com"
 
     private fun searchURL(query: String) =
@@ -26,7 +27,7 @@ class SoundCloudAPI(
             appendQueryParameter("q", query)
         }).build().toString()
 
-    override fun search(query: String, cb: (List<TrackInfo>) -> Unit) {
+    override fun search(query: String, cb: (Boolean, List<TrackInfo>) -> Unit) {
         val url = searchURL(query)
         Log.d(TAG, "Search for $query on SoundCloud: $url")
         val req = Request.Builder()
@@ -35,11 +36,13 @@ class SoundCloudAPI(
         App.okHttp.newCall(req).enqueue(object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 Log.e(TAG, "Can't load data from SoundCLoud: ${e?.message}", e)
+                cb(false, emptyList())
             }
 
             override fun onResponse(call: Call?, res: Response?) {
                 if (res == null) {
                     Log.e(TAG, "Response from SoundCloud is empty")
+                    cb(false, emptyList())
                     return
                 }
 
@@ -48,11 +51,12 @@ class SoundCloudAPI(
                     Log.i(TAG, raw)
                     val type = object: TypeToken<List<SCTrack>>(){}
                     val tracks = App.parseJson(raw, type)?.map {
-                        TrackInfo(url = it.stream_url, coverURL = it.artwork_url, artist = it.user.username, title = it.title)
+                        TrackInfo(url = it.stream_url, coverURL = it.artwork_url, artist = it.user.username, title = it.title, source = sourceName)
                     }
-                    cb(tracks ?: emptyList())
+                    cb(true, tracks ?: emptyList())
                 } else {
                     Log.i(TAG, res.message())
+                    cb(false, emptyList())
                 }
             }
         })
