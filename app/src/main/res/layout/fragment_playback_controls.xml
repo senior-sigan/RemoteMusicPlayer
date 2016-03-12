@@ -53,6 +53,6 @@
         android:padding="8dp"
         android:layout_alignParentEnd="true"
         android:background="?selectableItemBackgroundBorderless"
-        android:src="@android:drawable/ic_media_play"
+        android:src="@drawable/ic_play_arrow_black_24dp"
         android:contentDescription="@string/play_pause" />
 </RelativeLayout>

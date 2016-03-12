@@ -24,7 +24,7 @@ class Notifications(
         stopIntent.action = ServerService.ACTION_STOP
 
         val stopAction = Notification.Action.Builder(
-                Icon.createWithResource(context, android.R.drawable.ic_media_pause),
+                Icon.createWithResource(context, R.drawable.ic_stop_black_24dp),
                 "stop",
                 PendingIntent.getService(context, 0,stopIntent, 0)
         ).build()
@@ -36,7 +36,7 @@ class Notifications(
                 .setContentIntent(PendingIntent.getActivity(context, 0, intent, 0))
                 .addAction(stopAction)
                 .setOngoing(true)
-                .setPriority(Notification.PRIORITY_MIN)
+                //.setPriority(Notification.PRIORITY_MIN)
                 .setVisibility(Notification.VISIBILITY_SECRET)
                 .build()
 
@@ -49,7 +49,7 @@ class Notifications(
         stopIntent.action = MusicService.ACTION_STOP
 
         val stopAction = Notification.Action.Builder(
-                Icon.createWithResource(context, android.R.drawable.ic_media_pause),
+                Icon.createWithResource(context, R.drawable.ic_stop_black_24dp),
                 "stop",
                 PendingIntent.getService(context, 0, stopIntent, 0)
         ).build()

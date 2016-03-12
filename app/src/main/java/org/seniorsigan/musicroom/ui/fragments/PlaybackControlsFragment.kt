@@ -47,7 +47,7 @@ class PlaybackControlsFragment : Fragment() {
             titleView.text = track.title
             artistView.text = track.artist
             coverView.image = BitmapDrawable(resources, track.cover)
-            button.setImageResource(android.R.drawable.ic_media_pause)
+            button.setImageResource(R.drawable.ic_stop_black_24dp)
         } else {
             clearTrackView()
         }
@@ -57,7 +57,7 @@ class PlaybackControlsFragment : Fragment() {
         titleView.text = "Unknown title"
         artistView.text = "Unknown artist"
         coverView.image = App.defaults.cover
-        button.setImageResource(android.R.drawable.ic_media_play)
+        button.setImageResource(R.drawable.ic_play_arrow_black_24dp)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

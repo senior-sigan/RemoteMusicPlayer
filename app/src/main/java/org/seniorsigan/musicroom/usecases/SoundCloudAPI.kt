@@ -38,7 +38,7 @@ class SoundCloudAPI(
             val tracks = App.parseJson(raw, type)?.map {
                 TrackInfo(
                         url = "${it.stream_url}?client_id=$clientID",
-                        coverURL = it.artwork_url.replace("-large", "-t500x500"),
+                        coverURL = it.artwork_url?.replace("-large", "-t500x500"),
                         artist = it.user.username,
                         title = it.title,
                         source = sourceName)
@@ -52,7 +52,7 @@ class SoundCloudAPI(
     }
 
     private data class SCTrack(
-            val artwork_url: String,
+            val artwork_url: String?,
             val stream_url: String,
             val title: String,
             val user: SCUser
