@@ -8,7 +8,7 @@ data class HistoryModel(
         val title: String,
         val url: String,
         val source: String,
-        val coverURL: String? = null,
+        val coverURL: String?,
         val createdAt: Date = Date(),
         val updatedAt: Date = Date()
 )

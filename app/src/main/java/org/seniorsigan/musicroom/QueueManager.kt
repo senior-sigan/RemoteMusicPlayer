@@ -21,7 +21,7 @@ class QueueManager(val context: Context) {
                 url = track.url,
                 title = track.title,
                 artist = track.artist,
-                cover = BitmapFactory.decodeResource(context.resources, R.drawable.default_album_art_big_card))
+                cover = App.defaults.coverBitmap)
         queue = t
         Log.d(TAG, "Added track to queue $queue")
         context.startService(Intent(context, MusicService::class.java))
@@ -29,6 +29,7 @@ class QueueManager(val context: Context) {
             if (track.coverURL == null) {
                 App.coverSearch.search(track.title, track.artist, {url ->
                     loadCover(t, url)
+                    if (url != null) App.historyRepository.updateCover(track, url)
                 })
             } else {
                 loadCover(t, track.coverURL)

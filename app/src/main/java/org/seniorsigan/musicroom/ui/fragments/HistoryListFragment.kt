@@ -14,6 +14,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.async
 import org.jetbrains.anko.find
+import org.jetbrains.anko.onUiThread
 import org.jetbrains.anko.support.v4.onRefresh
 import org.seniorsigan.musicroom.*
 import org.seniorsigan.musicroom.adapter.HistoryAdapter
@@ -27,7 +28,7 @@ class HistoryListFragment: Fragment() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onHistoryUpdate(model: HistoryModel) {
         Log.d(TAG, "Update history list, new item's added: $model")
-        adapter.addItem(model)
+        adapter.insert(model)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -57,10 +58,14 @@ class HistoryListFragment: Fragment() {
     }
 
     fun renderList() {
+        refresh.isRefreshing = true
         async() {
-            refresh.isRefreshing = true
-            adapter.collection = App.historyRepository.findAll()
-            refresh.isRefreshing = false
+            val history = App.historyRepository.findAll()
+            onUiThread {
+                adapter.update(history)
+                refresh.isRefreshing = false
+                Log.d(TAG, "Refreshed")
+            }
         }
     }
 

@@ -22,6 +22,7 @@ class App: Application() {
         lateinit var coverSearch: CoverSearch
         lateinit var queue: QueueManager
         lateinit var historyRepository: HistoryRepository
+        lateinit var defaults: Defaults
 
         fun toJson(data: Any?): String {
             return gson.toJson(data)
@@ -57,5 +58,6 @@ class App: Application() {
         queue = QueueManager(this)
         val dbHelper = DatabaseOpenHelper.getInstance(this)
         historyRepository = HistoryRepository(dbHelper)
+        defaults = Defaults(this)
     }
 }

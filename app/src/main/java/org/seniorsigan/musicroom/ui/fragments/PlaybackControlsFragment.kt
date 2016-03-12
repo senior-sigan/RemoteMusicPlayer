@@ -56,8 +56,7 @@ class PlaybackControlsFragment : Fragment() {
     private fun clearTrackView() {
         titleView.text = "Unknown title"
         artistView.text = "Unknown artist"
-        coverView.image = resources.getDrawable(
-                R.drawable.default_album_art_big_card, context.theme)
+        coverView.image = App.defaults.cover
         button.setImageResource(android.R.drawable.ic_media_play)
     }
 

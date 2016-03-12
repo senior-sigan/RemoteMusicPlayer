@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import org.greenrobot.eventbus.EventBus
 import org.seniorsigan.musicroom.TAG
+import org.seniorsigan.musicroom.TrackInfo
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,7 +29,7 @@ class HistoryRepository(val db: SQLiteOpenHelper) {
         iso8601Format.timeZone = TimeZone.getTimeZone("UTC")
     }
 
-    fun create(artist: String, title: String, url: String, source: String, coverURL: String? = null): HistoryModel {
+    fun create(artist: String, title: String, url: String, source: String, coverURL: String?): HistoryModel {
         Log.d(TAG, "HistoryRepository::create")
         var model: HistoryModel
         db.writableDatabase.beginTransaction()
@@ -40,7 +41,7 @@ class HistoryRepository(val db: SQLiteOpenHelper) {
             values.put(HistoryEntry.SOURCE, source)
             values.put(HistoryEntry.COVER_URL, coverURL)
             val id = db.writableDatabase.insertOrThrow(TABLE_NAME, null, values)
-            model = HistoryModel(_id = id, artist = artist, title = title, url = url, source = source)
+            model = HistoryModel(_id = id, artist = artist, title = title, url = url, source = source, coverURL = coverURL)
             db.writableDatabase.setTransactionSuccessful()
         } catch (e: Exception) {
             throw Exception("Something went wrong while saving history $artist-$title : ${e.message}", e)
@@ -50,6 +51,25 @@ class HistoryRepository(val db: SQLiteOpenHelper) {
         Log.d(TAG, "HistoryRepository created $model")
         EventBus.getDefault().post(model)
         return model
+    }
+
+    fun updateCover(trackInfo: TrackInfo, coverURL: String) {
+        Log.d(TAG, "HistoryRepository::updateCover")
+        try {
+            db.writableDatabase.beginTransaction()
+            val values = ContentValues()
+            values.put(HistoryEntry.COVER_URL, coverURL)
+            db.writableDatabase.update(TABLE_NAME, values,
+                    "${HistoryEntry.TITLE} = ? AND ${HistoryEntry.ARTIST} = ?",
+                    arrayOf(trackInfo.title, trackInfo.artist))
+            db.writableDatabase.setTransactionSuccessful()
+        } catch(e: Exception) {
+            throw Exception("Something went wrong while updating history $trackInfo: ${e.message}", e)
+        } finally {
+            db.writableDatabase.endTransaction()
+        }
+
+        Log.d(TAG, "HistoryRepository updated $trackInfo")
     }
 
     fun findAll(): List<HistoryModel> {
@@ -79,7 +99,7 @@ class HistoryRepository(val db: SQLiteOpenHelper) {
         } else {
             Log.d(TAG, "Loaded 0 elements")
         }
-
+        Log.d(TAG, "Converted: ${result.size}")
         return result
     }
 }

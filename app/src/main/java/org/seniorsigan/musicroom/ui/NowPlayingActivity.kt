@@ -66,8 +66,7 @@ class NowPlayingActivity : AppCompatActivity() {
     private fun clearView() {
         titleView.text = "Unknown title"
         artistView.text = "Unknown artist"
-        coverView.image = resources.getDrawable(
-                R.drawable.default_album_art_big_card, theme)
+        coverView.image = App.defaults.cover
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

@@ -36,7 +36,12 @@ class SoundCloudAPI(
             Log.i(TAG, "SoundCloud response: $raw")
             val type = object: TypeToken<List<SCTrack>>(){}
             val tracks = App.parseJson(raw, type)?.map {
-                TrackInfo(url = "${it.stream_url}?client_id=$clientID", coverURL = it.artwork_url, artist = it.user.username, title = it.title, source = sourceName)
+                TrackInfo(
+                        url = "${it.stream_url}?client_id=$clientID",
+                        coverURL = it.artwork_url.replace("-large", "-t500x500"),
+                        artist = it.user.username,
+                        title = it.title,
+                        source = sourceName)
             }
             Log.d(TAG, "SoundCloud tracks: $tracks")
             return tracks ?: emptyList()
