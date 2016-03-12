@@ -6,7 +6,13 @@ export default React.createClass({
   render() {
     const list = this.props.data.map(track => {
       return (
-        <Track key={track.id} title={track.title} artist={track.artist} url={track.url} />
+        <Track
+          key={track.id}
+          title={track.title}
+          artist={track.artist}
+          url={track.url}
+          coverURL={track.coverURL}
+          source={track.source}/>
       );
     });
     return (

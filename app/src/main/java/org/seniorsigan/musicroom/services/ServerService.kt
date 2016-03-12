@@ -8,14 +8,14 @@ import org.jetbrains.anko.notificationManager
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.wifiManager
 import org.seniorsigan.musicroom.Notifications
-import org.seniorsigan.musicroom.Server
+import org.seniorsigan.musicroom.APIServer
 import org.seniorsigan.musicroom.TAG
 import java.util.*
 
 class ServerService: Service() {
     @Volatile private var isRunning: Boolean = false
     private lateinit var notifications: Notifications
-    private lateinit var server: Server
+    private lateinit var server: APIServer
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
@@ -23,7 +23,7 @@ class ServerService: Service() {
 
     override fun onCreate() {
         super.onCreate()
-        server = Server(assets)
+        server = APIServer(applicationContext)
         notifications = Notifications(this)
         Log.d(TAG, "ServerService onCreate")
     }
@@ -66,10 +66,10 @@ class ServerService: Service() {
                 return
             }
 
-            val address = "Listen to http://$formattedIpAddress:${Server.PORT}"
+            val address = "Listen to http://$formattedIpAddress:${APIServer.PORT}"
             toast(address)
             Log.i(TAG, address)
-            val notification = notifications.serverNotification("http://$formattedIpAddress:${Server.PORT}")
+            val notification = notifications.serverNotification("http://$formattedIpAddress:${APIServer.PORT}")
             startForeground(Notifications.SERVER_NOTIFICATION_ID, notification)
             isRunning = true
         })

@@ -35,6 +35,9 @@ ext {
     support_version = '23.2.0'
     nanohttpd_version = '2.2.0'
     eventbus_version = '3.0.0'
+    gson_version = '2.6.2'
+    okhttp_version = '3.2.0'
+    picasso_version = '2.5.2'
 }
 
 dependencies {
@@ -48,9 +51,9 @@ dependencies {
     compile "org.nanohttpd:nanohttpd:$nanohttpd_version"
     compile "org.nanohttpd:nanohttpd-nanolets:$nanohttpd_version"
     compile "org.greenrobot:eventbus:$eventbus_version"
-    compile 'com.google.code.gson:gson:2.6.2'
-    compile 'com.squareup.okhttp3:okhttp:3.2.0'
-    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile "com.google.code.gson:gson:$gson_version"
+    compile "com.squareup.okhttp3:okhttp:$okhttp_version"
+    compile "com.squareup.picasso:picasso:$picasso_version"
 
     compile "org.jetbrains.anko:anko-sdk21:$anko_version"
     compile "org.jetbrains.anko:anko-support-v4:$anko_version"

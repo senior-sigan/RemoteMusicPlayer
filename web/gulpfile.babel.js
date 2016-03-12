@@ -48,7 +48,7 @@ gulp.task('clean', cb => {
 gulp.task('browserSync', () => {
   browserSync({
     server: {
-      baseDir: './'
+      baseDir: './dist'
     }
   });
 });
@@ -130,8 +130,13 @@ gulp.task('favicon', () =>
     .pipe(gulp.dest(paths.dist))
 );
 
+gulp.task('api', () =>
+  gulp.src('api/**/*')
+    .pipe(gulp.dest(`${paths.dist}/api`))
+);
+
 gulp.task('watch', cb => {
-  runSequence('clean', ['browserSync', 'watchTask', 'watchify', 'styles', 'lint', 'images'], cb);
+  runSequence('clean', ['browserSync', 'watchTask', 'watchify', 'htmlReplace', 'styles', 'lint', 'images', 'favicon', 'api'], cb);
 });
 
 gulp.task('build', cb => {

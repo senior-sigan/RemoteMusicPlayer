@@ -1,28 +1,27 @@
 package org.seniorsigan.musicroom
 
+import android.content.Context
 import android.content.res.AssetManager
 import android.util.Log
-import com.vk.sdk.VKSdk
-import com.vk.sdk.api.VKApi
-import com.vk.sdk.api.VKParameters
-import com.vk.sdk.api.VKRequest
-import com.vk.sdk.api.VKResponse
-import com.vk.sdk.api.model.VkAudioArray
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.router.RouterNanoHTTPD
 
-class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
+class APIServer(val context: Context) : RouterNanoHTTPD(APIServer.PORT) {
     init {
         addMappings()
     }
 
     override fun addMappings() {
         super.addMappings()
+        addRoute("/api/search.json", SearchHandler::class.java)
+        addRoute("/api/soundcloud.json", SoundCloudHandler::class.java)
         addRoute("/api/vk.json", VkHandler::class.java)
-        addRoute("/api/url.json", BaseHandler::class.java)
-        addRoute("/(.)+", StaticHandler::class.java, manager)
-        addRoute("/", StaticHandler::class.java, manager)
+        addRoute("/api/play.json", BaseHandler::class.java)
+        addRoute("/(.)+", StaticHandler::class.java, context.assets)
+        addRoute("/", StaticHandler::class.java, context.assets)
     }
+
+
 
     class VkHandler: DefaultHandler() {
         override fun getMimeType(): String = "application/json"
@@ -36,30 +35,42 @@ class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
         override fun get(uriResource: UriResource?, urlParams: MutableMap<String, String>?, session: IHTTPSession?): Response? {
             Log.d(TAG, "Call VK search")
             val query = session?.parms?.get("q") ?: ""
-            if (VKSdk.isLoggedIn()) {
-                val req = VKApi.audio().search(
-                        VKParameters(mapOf(
-                                "auto_complete" to 1,
-                                "sort" to 2,
-                                "q" to query)))
-                val tracks: MutableList<TrackModel> = arrayListOf()
-                req.executeSyncWithListener(object : VKRequest.VKRequestListener() {
-                    override fun onComplete(response: VKResponse?) {
-                        super.onComplete(response)
-                        if (response != null) {
-                            Log.i(TAG, "Found info ${response.json}")
-                            val data = response.parsedModel as VkAudioArray
-                            tracks.addAll(data.map {
-                                TrackModel(id=it.id,artist=it.artist,title= it.title,url= it.url)
-                            })
-                        }
-                    }
-                })
+            val tracks = App.vkAPI.search(query)
+            return NanoHTTPD.newFixedLengthResponse(status, mimeType, App.toJson(CommonResponse(true, null, tracks)))
+        }
+    }
 
-                return NanoHTTPD.newFixedLengthResponse(status, mimeType, App.toJson(CommonResponse(true, null, tracks)))
-            } else {
-                return NanoHTTPD.newFixedLengthResponse(Response.Status.UNAUTHORIZED, mimeType, App.toJson(CommonResponse(false, "vk should be connected", null)))
-            }
+    class SoundCloudHandler: DefaultHandler() {
+        override fun getMimeType(): String = "application/json"
+
+        override fun getText(): String? {
+            throw UnsupportedOperationException()
+        }
+
+        override fun getStatus() = Response.Status.OK
+
+        override fun get(uriResource: UriResource?, urlParams: MutableMap<String, String>?, session: IHTTPSession?): Response? {
+            Log.d(TAG, "Call SoundCloud search")
+            val query = session?.parms?.get("q") ?: ""
+            val tracks = App.soundCloud.search(query)
+            return NanoHTTPD.newFixedLengthResponse(status, mimeType, App.toJson(CommonResponse(true, null, tracks)))
+        }
+    }
+
+    class SearchHandler: DefaultHandler() {
+        override fun getMimeType(): String = "application/json"
+
+        override fun getText(): String? {
+            throw UnsupportedOperationException()
+        }
+
+        override fun getStatus() = Response.Status.OK
+
+        override fun get(uriResource: UriResource?, urlParams: MutableMap<String, String>?, session: IHTTPSession?): Response? {
+            Log.d(TAG, "Call overall search")
+            val query = session?.parms?.get("q") ?: ""
+            val tracks = App.soundCloud.search(query) + App.vkAPI.search(query)
+            return NanoHTTPD.newFixedLengthResponse(status, mimeType, App.toJson(CommonResponse(true, null, tracks)))
         }
     }
 
@@ -76,15 +87,19 @@ class Server(val manager: AssetManager) : RouterNanoHTTPD(Server.PORT) {
             if (session?.method == Method.POST) {
                 val body: MutableMap<String, String> = mutableMapOf()
                 session?.parseBody(body)
-                val data = App.parseJson(body["postData"], TrackForm::class.java) ?: return NanoHTTPD.newFixedLengthResponse(Response.Status.BAD_REQUEST, MIME_PLAINTEXT, "Bad form data")
+                val data = App.parseJson(body["postData"], TrackInfo::class.java) ?: return NanoHTTPD.newFixedLengthResponse(Response.Status.BAD_REQUEST, MIME_PLAINTEXT, "Bad form data")
                 try {
                     App.historyRepository.create(
-                            artist = data.artist ?: "Unknown artist",
-                            title = data.title ?: "Unknown title",
+                            artist = data.artist,
+                            title = data.title,
                             url = data.url,
                             source = "vk"
                     )
-                    App.queue.add(data)
+                    App.queue.add(TrackForm(
+                            url = data.url,
+                            artist = data.artist,
+                            title = data.title
+                    ))
                     return NanoHTTPD.newFixedLengthResponse(data.name)
                 } catch (e: Exception) {
                     Log.e(TAG, e.message, e)

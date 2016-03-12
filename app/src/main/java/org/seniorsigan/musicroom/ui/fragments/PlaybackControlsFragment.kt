@@ -4,6 +4,7 @@ import android.app.Fragment
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -46,6 +47,7 @@ class PlaybackControlsFragment : Fragment() {
             titleView.text = track.title
             artistView.text = track.artist
             coverView.image = BitmapDrawable(resources, track.cover)
+            button.setImageResource(android.R.drawable.ic_media_pause)
         } else {
             clearTrackView()
         }
@@ -56,6 +58,7 @@ class PlaybackControlsFragment : Fragment() {
         artistView.text = "Unknown artist"
         coverView.image = resources.getDrawable(
                 R.drawable.default_album_art_big_card, context.theme)
+        button.setImageResource(android.R.drawable.ic_media_play)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

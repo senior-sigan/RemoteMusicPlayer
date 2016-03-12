@@ -17,11 +17,11 @@ export default React.createClass({
       this.props.onSearchSubmit([]);
       return;
     }
-    const url = `/api/vk.json?q=${q}`;
+    const url = `/api/search.json?q=${q}`;
     fetch(url, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json;charset=UTF-8'
+        'Content-Type': 'application/json; charset=utf-8'
       },
     }).then(res => res.json()).then(data => {
       if (data.success) {

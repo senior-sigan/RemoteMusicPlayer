@@ -10,8 +10,11 @@ import org.seniorsigan.musicroom.TrackInfo
 class VkAPI(): SearchAPI {
     override val sourceName: String = "vk"
 
-    override fun search(query: String, cb: (Boolean, List<TrackInfo>) -> Unit) {
-        if (!VKSdk.isLoggedIn()) throw Exception("User not logged in VK")
+    override fun search(query: String): List<TrackInfo> {
+        if (!VKSdk.isLoggedIn()) {
+            Log.w(TAG, "User not logged in VK")
+            return emptyList()
+        }
 
         val req = VKApi.audio().search(
                 VKParameters(mapOf(
@@ -19,11 +22,12 @@ class VkAPI(): SearchAPI {
                         "sort" to 2,
                         "q" to query)))
 
-        req.executeWithListener(object : VKRequest.VKRequestListener() {
+        var tracks: MutableList<TrackInfo> = arrayListOf()
+
+        req.executeSyncWithListener(object : VKRequest.VKRequestListener() {
             override fun onError(error: VKError?) {
                 super.onError(error)
                 Log.e(TAG, "Can't load data from VK: ${error?.errorMessage}")
-                cb(false, emptyList())
             }
 
             override fun onComplete(response: VKResponse?) {
@@ -31,13 +35,14 @@ class VkAPI(): SearchAPI {
                 if (response != null) {
                     Log.d(TAG, "Found info ${response.json}")
                     val data = response.parsedModel as VkAudioArray
-                    val tracks = data.map {
+                    tracks.addAll(data.map {
                         TrackInfo(artist = it.artist, title = it.title, url = it.url, coverURL = null, source = sourceName)
-                    }
-                    cb(true, tracks)
+                    })
+                    Log.d(TAG, "VK tracks: $tracks")
                 }
-                cb(false, emptyList())
             }
         })
+
+        return tracks
     }
 }

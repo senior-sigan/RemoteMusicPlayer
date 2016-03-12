@@ -4,5 +4,5 @@ import org.seniorsigan.musicroom.TrackInfo
 
 interface SearchAPI {
     val sourceName: String
-    fun search(query: String, cb: (success: Boolean, data: List<TrackInfo>) -> Unit)
+    fun search(query: String): List<TrackInfo>
 }
