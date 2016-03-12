@@ -2,6 +2,8 @@ package org.seniorsigan.musicroom.usecases
 
 import org.seniorsigan.musicroom.TrackInfo
 
+const val SEARCH_LIMIT = 15
+
 interface SearchAPI {
     val sourceName: String
     fun search(query: String): List<TrackInfo>

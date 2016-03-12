@@ -28,7 +28,7 @@ class HistoryRepository(val db: SQLiteOpenHelper) {
         iso8601Format.timeZone = TimeZone.getTimeZone("UTC")
     }
 
-    fun create(artist: String, title: String, url: String, source: String): HistoryModel {
+    fun create(artist: String, title: String, url: String, source: String, coverURL: String? = null): HistoryModel {
         Log.d(TAG, "HistoryRepository::create")
         var model: HistoryModel
         db.writableDatabase.beginTransaction()
@@ -38,8 +38,9 @@ class HistoryRepository(val db: SQLiteOpenHelper) {
             values.put(HistoryEntry.TITLE, title)
             values.put(HistoryEntry.URL, url)
             values.put(HistoryEntry.SOURCE, source)
+            values.put(HistoryEntry.COVER_URL, coverURL)
             val id = db.writableDatabase.insertOrThrow(TABLE_NAME, null, values)
-            model = HistoryModel(_id = id, artist = artist, title = title, url = url)
+            model = HistoryModel(_id = id, artist = artist, title = title, url = url, source = source)
             db.writableDatabase.setTransactionSuccessful()
         } catch (e: Exception) {
             throw Exception("Something went wrong while saving history $artist-$title : ${e.message}", e)
@@ -69,6 +70,7 @@ class HistoryRepository(val db: SQLiteOpenHelper) {
                             title = cursor.getString(2),
                             artist = cursor.getString(3),
                             coverURL = cursor.getString(4),
+                            source = cursor.getString(6),
                             createdAt = iso8601Format.parse(cursor.getString(8)),
                             updatedAt = iso8601Format.parse(cursor.getString(9))
                     ))

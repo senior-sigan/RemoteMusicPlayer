@@ -7,6 +7,7 @@ class HistoryModel(
         val artist: String,
         val title: String,
         val url: String,
+        val source: String,
         val coverURL: String? = null,
         val createdAt: Date = Date(),
         val updatedAt: Date = Date()

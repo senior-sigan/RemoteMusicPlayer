@@ -11,11 +11,11 @@ import org.seniorsigan.musicroom.services.MusicService
 class QueueManager(val context: Context) {
     private var queue: Track? = null
 
-    fun add(track: TrackForm) {
+    fun add(track: TrackInfo) {
         queue = Track(
                 url = track.url,
-                title = track.title ?: "Unknown title",
-                artist = track.artist ?: "Unknown artist",
+                title = track.title,
+                artist = track.artist,
                 cover = BitmapFactory.decodeResource(context.resources, R.drawable.default_album_art_big_card))
         Log.d(TAG, "Added track to queue $queue")
         context.startService(Intent(context, MusicService::class.java))

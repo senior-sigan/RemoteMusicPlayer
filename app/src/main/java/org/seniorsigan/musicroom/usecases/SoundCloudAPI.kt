@@ -21,6 +21,7 @@ class SoundCloudAPI(
             appendPath("tracks")
             appendQueryParameter("client_id", clientID)
             appendQueryParameter("q", query)
+            appendQueryParameter("limit", SEARCH_LIMIT.toString())
         }).build().toString()
 
     override fun search(query: String): List<TrackInfo> {

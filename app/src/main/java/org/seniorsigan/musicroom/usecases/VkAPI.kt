@@ -18,6 +18,7 @@ class VkAPI(): SearchAPI {
 
         val req = VKApi.audio().search(
                 VKParameters(mapOf(
+                        "count" to SEARCH_LIMIT,
                         "auto_complete" to 1,
                         "sort" to 2,
                         "q" to query)))

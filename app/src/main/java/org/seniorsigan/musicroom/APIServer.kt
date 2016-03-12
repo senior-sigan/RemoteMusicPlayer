@@ -38,21 +38,18 @@ class APIServer(val context: Context) : RouterNanoHTTPD(APIServer.PORT) {
     class PlayHandler: JSONHandler() {
         override fun handlePost(query: Map<String, String?>, body: String?): Any {
             try {
-                val data = App.parseJson(body, TrackInfo::class.java)
+                val track = App.parseJson(body, TrackInfo::class.java)
                         ?: return CommonResponse(false, "Form is empty", null)
 
                 App.historyRepository.create(
-                        artist = data.artist,
-                        title = data.title,
-                        url = data.url,
-                        source = data.source
+                        artist = track.artist,
+                        title = track.title,
+                        url = track.url,
+                        source = track.source,
+                        coverURL = track.coverURL
                 )
-                App.queue.add(TrackForm(
-                        url = data.url,
-                        artist = data.artist,
-                        title = data.title
-                ))
-                return CommonResponse(true, null, data)
+                App.queue.add(track)
+                return CommonResponse(true, null, track)
             } catch (e: Exception) {
                 Log.e(TAG, e.message, e)
                 return CommonResponse(false, e.message, null)

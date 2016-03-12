@@ -15,10 +15,7 @@ import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.async
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.onRefresh
-import org.seniorsigan.musicroom.App
-import org.seniorsigan.musicroom.R
-import org.seniorsigan.musicroom.TAG
-import org.seniorsigan.musicroom.TrackForm
+import org.seniorsigan.musicroom.*
 import org.seniorsigan.musicroom.adapter.HistoryAdapter
 import org.seniorsigan.musicroom.data.HistoryModel
 
@@ -42,10 +39,12 @@ class HistoryListFragment: Fragment() {
         })
 
         adapter.onItemClickListener = { history ->
-            App.queue.add(TrackForm(
+            App.queue.add(TrackInfo(
                     url = history.url,
                     title = history.title,
-                    artist = history.artist))
+                    artist = history.artist,
+                    source = history.source,
+                    coverURL = history.coverURL))
         }
 
         historyView.layoutManager = LinearLayoutManager(context)

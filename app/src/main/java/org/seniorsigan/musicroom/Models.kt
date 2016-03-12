@@ -5,27 +5,11 @@ import java.io.Serializable
 
 class AudioPlayedMessage(): Serializable
 
-data class TrackModel(
-        val id: Int,
-        val artist: String?,
-        val title: String?,
-        val url: String
-): Serializable
-
 data class CommonResponse(
         val success: Boolean,
         val error: String?,
         val data: Any?
 ): Serializable
-
-data class TrackForm(
-        val url: String = "",
-        val title: String? = null,
-        val artist: String? = null
-): Serializable {
-    val name: String
-        get() = "$artist - $title"
-}
 
 data class Track(
         val url: String,
