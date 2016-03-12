@@ -14,39 +14,9 @@ class APIServer(val context: Context) : RouterNanoHTTPD(APIServer.PORT) {
     override fun addMappings() {
         super.addMappings()
         addRoute("/api/search.json", SearchHandler::class.java)
-        addRoute("/api/soundcloud.json", SoundCloudHandler::class.java)
-        addRoute("/api/vk.json", VkHandler::class.java)
         addRoute("/api/play.json", PlayHandler::class.java)
         addRoute("/(.)+", StaticHandler::class.java, context.assets)
         addRoute("/", StaticHandler::class.java, context.assets)
-    }
-
-
-
-    class VkHandler: JSONHandler() {
-        override fun handleGet(query: Map<String, String?>): CommonResponse {
-            Log.d(TAG, "Call overall search")
-            return try {
-                val q = query["q"] ?: ""
-                val tracks = App.vkAPI.search(q)
-                CommonResponse(true, null, tracks)
-            } catch (e: Exception) {
-                CommonResponse(false, e.message, null)
-            }
-        }
-    }
-
-    class SoundCloudHandler: JSONHandler() {
-        override fun handleGet(query: Map<String, String?>): CommonResponse {
-            Log.d(TAG, "Call SoundCloud search")
-            return try {
-                val q = query["q"] ?: ""
-                val tracks = App.soundCloud.search(q)
-                CommonResponse(true, null, tracks)
-            } catch (e: Exception) {
-                CommonResponse(false, e.message, null)
-            }
-        }
     }
 
     class SearchHandler: JSONHandler() {
@@ -54,7 +24,10 @@ class APIServer(val context: Context) : RouterNanoHTTPD(APIServer.PORT) {
             Log.d(TAG, "Call overall search")
             return try {
                 val q = query["q"] ?: ""
-                val tracks = App.soundCloud.search(q) + App.vkAPI.search(q)
+                val sources = query["source"]?.split(",")
+                val engine = App.searchFactory.engineFor(sources)
+                Log.d(TAG, "Will search over ${engine.sourceName} sources")
+                val tracks = engine.search(q)
                 CommonResponse(true, null, tracks)
             } catch (e: Exception) {
                 CommonResponse(false, e.message, null)
@@ -114,48 +87,48 @@ class APIServer(val context: Context) : RouterNanoHTTPD(APIServer.PORT) {
         }
     }
 
-    open class JSONHandler: RouterNanoHTTPD.DefaultHandler() {
-        override fun getMimeType(): String = "application/json"
+    companion object {
+        val PORT = 8765
+    }
+}
 
-        override fun getText(): String? {
-            throw UnsupportedOperationException()
-        }
+open class JSONHandler: RouterNanoHTTPD.DefaultHandler() {
+    override fun getMimeType(): String = "application/json"
 
-        override fun getStatus() = NanoHTTPD.Response.Status.OK
+    override fun getText(): String? {
+        throw UnsupportedOperationException()
+    }
 
-        override fun get(uriResource: RouterNanoHTTPD.UriResource?, urlParams: MutableMap<String, String>?, session: NanoHTTPD.IHTTPSession?): NanoHTTPD.Response? {
-            return when (session?.method) {
-                Method.GET -> {
-                    Log.d(TAG, "GET: ${session?.uri}")
-                    val query = session?.parms ?: mapOf<String, String?>()
-                    val data = handleGet(query)
-                    NanoHTTPD.newFixedLengthResponse(status, mimeType, App.toJson(data))
-                }
-                Method.POST -> {
-                    Log.d(TAG, "POST: ${session?.uri}")
-                    val query = session?.parms ?: mapOf<String, String?>()
-                    val body: MutableMap<String, String> = mutableMapOf()
-                    session?.parseBody(body)
-                    val data = handlePost(query, body["postData"])
-                    NanoHTTPD.newFixedLengthResponse(status, mimeType, App.toJson(data))
-                }
-                else ->
-                    NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.NOT_FOUND, mimeType, "")
+    override fun getStatus() = NanoHTTPD.Response.Status.OK
+
+    override fun get(uriResource: RouterNanoHTTPD.UriResource?, urlParams: MutableMap<String, String>?, session: NanoHTTPD.IHTTPSession?): NanoHTTPD.Response? {
+        return when (session?.method) {
+            NanoHTTPD.Method.GET -> {
+                Log.d(TAG, "GET: ${session?.uri}")
+                val query = session?.parms ?: mapOf<String, String?>()
+                val data = handleGet(query)
+                NanoHTTPD.newFixedLengthResponse(status, mimeType, App.toJson(data))
             }
-        }
-
-        open fun handlePost(query: Map<String, String?>, body: String?): Any {
-            Log.w(TAG, "POST method not supported")
-            return Any()
-        }
-
-        open fun handleGet(query: Map<String, String?>): Any {
-            Log.w(TAG, "GET method not supported")
-            return Any()
+            NanoHTTPD.Method.POST -> {
+                Log.d(TAG, "POST: ${session?.uri}")
+                val query = session?.parms ?: mapOf<String, String?>()
+                val body: MutableMap<String, String> = mutableMapOf()
+                session?.parseBody(body)
+                val data = handlePost(query, body["postData"])
+                NanoHTTPD.newFixedLengthResponse(status, mimeType, App.toJson(data))
+            }
+            else ->
+                NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.NOT_FOUND, mimeType, "")
         }
     }
 
-    companion object {
-        val PORT = 8765
+    open fun handlePost(query: Map<String, String?>, body: String?): Any {
+        Log.w(TAG, "POST method not supported")
+        return Any()
+    }
+
+    open fun handleGet(query: Map<String, String?>): Any {
+        Log.w(TAG, "GET method not supported")
+        return Any()
     }
 }

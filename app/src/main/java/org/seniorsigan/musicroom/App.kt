@@ -8,10 +8,7 @@ import com.vk.sdk.VKSdk
 import okhttp3.OkHttpClient
 import org.seniorsigan.musicroom.data.DatabaseOpenHelper
 import org.seniorsigan.musicroom.data.HistoryRepository
-import org.seniorsigan.musicroom.usecases.CoverSearch
-import org.seniorsigan.musicroom.usecases.LastfmCoverSearch
-import org.seniorsigan.musicroom.usecases.SoundCloudAPI
-import org.seniorsigan.musicroom.usecases.VkAPI
+import org.seniorsigan.musicroom.usecases.*
 
 const val TAG = "MusicRoom"
 
@@ -21,8 +18,7 @@ class App: Application() {
         private val gsonBuilder = GsonBuilder()
         private val gson = gsonBuilder.create()
         val okHttp = OkHttpClient()
-        lateinit var soundCloud: SoundCloudAPI
-        lateinit var vkAPI: VkAPI
+        val searchFactory = SearchFactory()
         lateinit var coverSearch: CoverSearch
         lateinit var queue: QueueManager
         lateinit var historyRepository: HistoryRepository
@@ -53,8 +49,11 @@ class App: Application() {
         super.onCreate()
         VKSdk.initialize(applicationContext)
         coverSearch = LastfmCoverSearch(getString(R.string.lastfm_key))
-        soundCloud = SoundCloudAPI(getString(R.string.soundcloud_client_id))
-        vkAPI = VkAPI()
+        val soundCloud = SoundCloudAPI(getString(R.string.soundcloud_client_id))
+        val vkAPI = VkAPI()
+        searchFactory
+                .register(soundCloud.sourceName, soundCloud)
+                .register(vkAPI.sourceName, vkAPI)
         queue = QueueManager(this)
         val dbHelper = DatabaseOpenHelper.getInstance(this)
         historyRepository = HistoryRepository(dbHelper)
