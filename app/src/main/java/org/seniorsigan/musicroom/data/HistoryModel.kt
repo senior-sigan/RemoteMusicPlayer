@@ -2,7 +2,7 @@ package org.seniorsigan.musicroom.data
 
 import java.util.*
 
-class HistoryModel(
+data class HistoryModel(
         val _id: Long,
         val artist: String,
         val title: String,

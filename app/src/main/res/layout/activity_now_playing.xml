@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="false"
     android:clipToPadding="false"
-    tools:context=".NowPlayingActivity">
+    tools:context=".ui.NowPlayingActivity">
 
     <ImageView
         android:layout_width="match_parent"

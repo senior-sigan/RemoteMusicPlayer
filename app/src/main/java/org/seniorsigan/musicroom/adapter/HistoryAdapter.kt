@@ -4,7 +4,9 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import com.squareup.picasso.Picasso
 import org.jetbrains.anko.find
 import org.jetbrains.anko.layoutInflater
 import org.jetbrains.anko.onClick
@@ -42,6 +44,8 @@ class HistoryAdapter: RecyclerView.Adapter<HistoryViewHolder>() {
 class HistoryViewHolder(view: View, val onItemClickListener: ((HistoryModel) -> Unit)?) : RecyclerView.ViewHolder(view) {
     val title = view.find<TextView>(R.id.history_title)
     val artist = view.find<TextView>(R.id.history_artist)
+    val cover = view.find<ImageView>(R.id.history_album_art)
+    val context = view.context
 
     fun setItem(model: HistoryModel) {
         title.text = model.title
@@ -49,6 +53,9 @@ class HistoryViewHolder(view: View, val onItemClickListener: ((HistoryModel) -> 
         itemView?.onClick {
             Log.d(TAG, "Handle click on $model")
             onItemClickListener?.invoke(model)
+        }
+        if (model.coverURL != null) {
+            Picasso.with(context).load(model.coverURL).into(cover)
         }
     }
 }

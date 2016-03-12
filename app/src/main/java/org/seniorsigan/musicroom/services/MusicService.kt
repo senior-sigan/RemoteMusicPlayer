@@ -9,6 +9,7 @@ import android.util.Log
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import org.jetbrains.anko.notificationManager
 import org.jetbrains.anko.onUiThread
 import org.seniorsigan.musicroom.*
@@ -23,12 +24,14 @@ class MusicService: Service() {
         super.onCreate()
         notifications = Notifications(this)
         playback = Playback(this)
+        EventBus.getDefault().register(this)
         Log.d(TAG, "MusicService onCreate")
     }
 
     override fun onDestroy() {
         super.onDestroy()
         playback.release()
+        EventBus.getDefault().unregister(this)
         Log.d(TAG, "MusicService destroyed")
     }
 
@@ -55,37 +58,11 @@ class MusicService: Service() {
         val track = App.queue.current() ?: return
         EventBus.getDefault().post(track)
         playback.play()
-        updateNotification()
-        try {
-            App.coverSearch.search(track.title, track.artist, { url ->
-                Log.d(TAG, "Found cover: $url")
-                if (url == null || url.isEmpty()) return@search
-                onUiThread {
-                    Picasso.with(this).load(url).into(object : Target {
-                        override fun onPrepareLoad(drawable: Drawable?) {
-
-                        }
-
-                        override fun onBitmapFailed(drawable: Drawable?) {
-
-                        }
-
-                        override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-                            if (bitmap == null) return
-                            Log.d(TAG, "Cover loaded")
-                            App.queue.updateCover(track, bitmap)
-                            updateNotification()
-                        }
-                    })
-                }
-            })
-        } catch(e: Exception) {
-            Log.e(TAG, "MusicService handlePlay: ${e.message}", e)
-        }
+        updateNotification(track)
     }
 
-    private fun updateNotification() {
-        val track = App.queue.current() ?: return
+    @Subscribe
+    fun updateNotification(track: Track) {
         Log.d(TAG, "Update notification $track")
         val notification = notifications.musicNotification(track)
         startForeground(Notifications.MUSIC_NOTIFICATION_ID, notification)
