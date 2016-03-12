@@ -6,9 +6,11 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 
 class Defaults(private val context: Context) {
-    val cover: Drawable
-        get() = context.resources.getDrawable(R.drawable.default_album_art_big_card, context.theme)
+    val cover: Drawable by lazy {
+        context.resources.getDrawable(R.drawable.default_album_art_big_card, context.theme)
+    }
 
-    val coverBitmap: Bitmap
-        get() = BitmapFactory.decodeResource(context.resources, R.drawable.default_album_art_big_card)
+    val coverBitmap: Bitmap by lazy {
+        BitmapFactory.decodeResource(context.resources, R.drawable.default_album_art_big_card)
+    }
 }

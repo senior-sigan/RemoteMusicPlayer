@@ -36,6 +36,8 @@ class Notifications(
                 .setContentIntent(PendingIntent.getActivity(context, 0, intent, 0))
                 .addAction(stopAction)
                 .setOngoing(true)
+                .setPriority(Notification.PRIORITY_MIN)
+                .setVisibility(Notification.VISIBILITY_SECRET)
                 .build()
 
         return notification
